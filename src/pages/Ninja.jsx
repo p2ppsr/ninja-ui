@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   List,
   ListItem,
@@ -29,7 +30,8 @@ const useStyles = makeStyles({
     }
   },
   logo_list_grid: {
-    display: 'grid'
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr auto'
   },
   img: {
     width: '13em',

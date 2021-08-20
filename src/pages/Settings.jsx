@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Typography, Button } from '@material-ui/core'
 
 const Settings = ({ history }) => {
