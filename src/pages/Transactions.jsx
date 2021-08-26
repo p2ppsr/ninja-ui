@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from 'react';
-import ninja from 'utxoninja';
-import {Typography} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import React, {useState, useEffect} from 'react'
+import ninja from 'utxoninja'
+import {Typography} from '@material-ui/core'
+import {makeStyles} from '@material-ui/core/styles'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 const useStyles = makeStyles(
   theme => ({
@@ -78,25 +78,25 @@ const useStyles = makeStyles(
     },
   }),
   {name: 'Transactions'},
-);
+)
 
 const Transactions = () => {
-  const classes = useStyles();
-  const [tx, setTx] = useState([]);
-  const [expanded, setExpanded] = useState(false);
+  const classes = useStyles()
+  const [tx, setTx] = useState([])
+  const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
     (async () => {
       const result = await ninja.getTransactions({
         xprivKey: window.localStorage.xprivKey,
-      });
-      setTx(result.transactions);
-    })();
-  }, []);
+      })
+      setTx(result.transactions)
+    })()
+  }, [])
 
   const handleChange = panel => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
+    setExpanded(isExpanded ? panel : false)
+  }
 
   return (
     <div>
@@ -127,7 +127,7 @@ const Transactions = () => {
                             <div className={classes.entryValue}>{v}</div>
                           </li>
                         )
-                      );
+                      )
                     })}
                   </ul>
                   <ul className={classes.entriesList}>
@@ -139,7 +139,7 @@ const Transactions = () => {
                             <div className={classes.entryValue}>{v}</div>
                           </li>
                         )
-                      );
+                      )
                     })}
                   </ul>
                 </div>
@@ -149,7 +149,7 @@ const Transactions = () => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Transactions;
+export default Transactions
