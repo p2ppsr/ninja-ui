@@ -1,101 +1,63 @@
-import React, {useState} from 'react';
-import utxoninja from 'utxoninja';
+import { useState } from 'react'
+import utxoninja from 'utxoninja'
 import {
   Typography,
   TextField,
   Button,
   Select,
-  MenuItem,
-} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
-
-const useStyles = makeStyles(
-  theme => ({
-    params: {
-      margin: '1em auto',
-    },
-    run: {
-      marginBottom: '1em',
-    },
-    results: {
-      boxShadow: theme.shadows[3],
-      margin: '1em auto',
-      minHeight: '5em',
-      padding: '1em',
-      boxSizing: 'border-box',
-      overflow: 'scroll',
-      borderRadius: '0.5em',
-    },
-  }),
-  {name: 'Commands'},
-);
-
-const possibleCommands = Object.keys(utxoninja);
+  MenuItem
+} from '@material-ui/core'
 
 const Commands = () => {
-  const classes = useStyles();
-  const [command, setCommand] = useState(possibleCommands[0]);
-  const [params, setParams] = useState('');
-  const [results, setResults] = useState(
-    'Press "Run Command" to see results...',
-  );
-  const [running, setRunning] = useState(false);
+  const possibleCommands = Object.keys(utxoninja)
+  const [command, setCommand] = useState(0)
+  const [params, setParams] = useState('')
+  const [results, setResults] = useState('')
+  const [running, setRunning] = useState(false)
 
   const handleRunClick = async () => {
     try {
-      setRunning(true);
-      console.log('command', command);
-      const parsedParams = params ? JSON.parse(params) : {};
-      const runResult = await utxoninja[command]({
+      setRunning(true)
+      const parsedParams = params ? JSON.parse(params) : {}
+      const runResult = await utxoninja[possibleCommands[command]]({
         xprivKey: window.localStorage.xprivKey,
-        ...parsedParams,
-      });
-      setResults(JSON.stringify(runResult, null, 2));
+        ...parsedParams
+      })
+      setResults(JSON.stringify(runResult, null, 2))
     } catch (e) {
-      console.error(e);
-      setResults('Error: ' + e.message);
+      window.alert('Error: ' + e.message)
+      console.error(e)
     } finally {
-      setRunning(false);
+      setRunning(false)
     }
-  };
+  }
 
   return (
     <div>
-      <Typography variant="h3" paragraph>
-        Commands
-      </Typography>
+      <Typography variant='h3'>Commands</Typography>
       <Select
-        onChange={e => setCommand(e.target.value)}
+        onChange={(e, v) => setCommand(v)}
         value={command}
-        fullWidth>
+      >
         {possibleCommands.map((x, i) => (
-          <MenuItem key={i} value={x}>
-            {x}
-          </MenuItem>
+          <MenuItem key={i} value={i}>{x}</MenuItem>
         ))}
       </Select>
       <TextField
-        className={classes.params}
         multiline
-        label="Params (JSON)"
-        rows={10}
+        label='Params (JSON)'
+        lines={10}
         fullWidth
         placeholder='{"newPaymail":"who@johngalt.is"}'
         value={params}
         onChange={e => setParams(e.target.value)}
       />
-      <Button
-        className={classes.run}
-        disabled={running}
-        onClick={handleRunClick}
-        color="primary"
-        variant="contained">
-        Run Command
-      </Button>
-      <Typography variant="h4">Results</Typography>
-      <pre className={classes.results}>{results}</pre>
+      <Button disabled={running} onClick={handleRunClick}>Run</Button>
+      <pre>
+        {results}
+      </pre>
     </div>
-  );
-};
+  )
+}
 
-export default Commands;
+export default Commands
