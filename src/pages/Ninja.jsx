@@ -1,22 +1,23 @@
-import React, {useEffect, useState} from 'react'
-import utxoninja from 'utxoninja'
+import React, {useEffect, useState} from 'react';
+import utxoninja from 'utxoninja';
 import {
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   Typography,
-} from '@material-ui/core'
-import {makeStyles} from '@material-ui/core/styles'
-import RefreshIcon from '@material-ui/icons/Refresh'
-import {Switch, Route, Redirect} from 'react-router-dom'
-import Transactions from './Transactions'
-import Commands from './Commands'
-import Settings from './Settings'
-import isKeyInvalid from '../utils/isKeyInvalid'
-import SettingsIcon from '@material-ui/icons/Settings'
-import CommandsIcon from '@material-ui/icons/Code'
-import TransactionsIcon from '@material-ui/icons/ListAlt'
+} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import {Switch, Route, Redirect} from 'react-router-dom';
+import Transactions from './Transactions';
+import Commands from './Commands';
+import NewTransactionModal from './NewTransactionModal';
+import Settings from './Settings';
+import isKeyInvalid from '../utils/isKeyInvalid';
+import SettingsIcon from '@material-ui/icons/Settings';
+import CommandsIcon from '@material-ui/icons/Code';
+import TransactionsIcon from '@material-ui/icons/ListAlt';
 
 const useStyles = makeStyles(
   {
@@ -49,39 +50,39 @@ const useStyles = makeStyles(
     },
   },
   {name: 'Ninja'},
-)
+);
 
 const Ninja = ({history, location}) => {
-  const [running, setRunning] = useState(false)
-  const [currentBalance, setCurrentBalance] = useState(0)
-  const classes = useStyles()
+  const [running, setRunning] = useState(false);
+  const [currentBalance, setCurrentBalance] = useState(0);
+  const classes = useStyles();
 
   useEffect(() => {
-    getTotalValueRefreshClick()
-  }, [])
+    getTotalValueRefreshClick();
+  }, []);
 
   if (isKeyInvalid(window.localStorage.xprivKey)) {
-    return <Redirect to="/" />
+    return <Redirect to="/" />;
   }
 
   const getTotalValueRefreshClick = async () => {
     try {
-      setRunning(true)
+      setRunning(true);
       const runResult = await utxoninja['getTotalValue']({
         xprivKey: window.localStorage.xprivKey,
-      })
-      setCurrentBalance(runResult.total)
+      });
+      setCurrentBalance(runResult.total);
     } catch (e) {
-      console.error(e)
-      setCurrentBalance('Error: ' + e.message)
+      console.error(e);
+      setCurrentBalance('Error: ' + e.message);
     } finally {
-      setRunning(false)
+      setRunning(false);
     }
-  }
+  };
 
   const numberWithCommas = x => {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-  }
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
 
   return (
     <div className={classes.content_wrap}>
@@ -89,7 +90,10 @@ const Ninja = ({history, location}) => {
         <img src="/banner.png" className={classes.img} alt="" />
         <List>
           <ListItem>
-            <Typography>Current Balance: <b>{numberWithCommas(currentBalance)} Satoshis</b></Typography>
+            <Typography>
+              Current Balance:{' '}
+              <b>{numberWithCommas(currentBalance)} Satoshis</b>
+            </Typography>
             <RefreshIcon
               disabled={running}
               onClick={getTotalValueRefreshClick}
@@ -144,6 +148,7 @@ const Ninja = ({history, location}) => {
             </ListItemIcon>
             <ListItemText>Settings</ListItemText>
           </ListItem>
+          <NewTransactionModal /> 
         </List>
         <Typography color="textSecondary" align="center">
           You are a ninja
@@ -155,7 +160,7 @@ const Ninja = ({history, location}) => {
         <Route exact path="/ninja/settings" component={Settings} />
       </Switch>
     </div>
-  )
-}
+  );
+};
 
-export default Ninja
+export default Ninja;
