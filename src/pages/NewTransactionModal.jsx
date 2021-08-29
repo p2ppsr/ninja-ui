@@ -1,6 +1,6 @@
-import React, { useState} from 'react';
-import utxoninja from 'utxoninja';
-import {makeStyles} from '@material-ui/core/styles';
+import React, {useState} from 'react'
+import utxoninja from 'utxoninja'
+import {makeStyles} from '@material-ui/core/styles'
 import {
   Button,
   ListItem,
@@ -9,18 +9,18 @@ import {
   Modal,
   TextField,
   Typography,
-} from '@material-ui/core';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+} from '@material-ui/core'
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
 
 function getModalStyle() {
-  const top = 50;
-  const left = 50;
+  const top = 50
+  const left = 50
 
   return {
     top: `${top}%`,
     left: `${left}%`,
     transform: `translate(-${top}%, -${left}%)`,
-  };
+  }
 }
 
 const useStyles = makeStyles(theme => ({
@@ -44,67 +44,97 @@ const useStyles = makeStyles(theme => ({
     overflow: 'scroll',
     borderRadius: '0.5em',
   },
-  textField: {
+  gap: {
     margin: '0.5em 0',
-  }
-}));
+  },
+}))
 
 const NewTransactionModal = () => {
-  const classes = useStyles();
+  const classes = useStyles()
   // getModalStyle is not a pure function, we roll the style only on the first render
-  const [modalStyle] = React.useState(getModalStyle);
-  const [open, setOpen] = React.useState(false);
-  const [xpriv, setXpriv] = React.useState(false);
-  const [running, setRunning] = React.useState(false);
+  const [modalStyle] = React.useState(getModalStyle)
+  const [open, setOpen] = React.useState(false)
+  const [running, setRunning] = React.useState(false)
+  const [, updateState] = React.useState()
+  const forceUpdate = React.useCallback(() => updateState({}), [])
+  const [outputs, setOutputs] = React.useState([{script: '', satoshis: 0}])
   const [results, setResults] = useState(
     'Press "Run Command" to see results...',
-  );
+  )
 
   const getTransactionWithOutputsClick = async () => {
     try {
-      setRunning(true);
+      setRunning(true)
       const runResult = await utxoninja['getTransactionWithOutputs']({
         xprivKey: window.localStorage.xprivKey,
-      });
-      console.log('runResult', runResult);
-      setResults(runResult);
+        outputs: [
+          {
+            script: '76a914284cc46442db77856e2126e32168e8a1f4b8028b88ac',
+            satoshis: 1000,
+          },
+        ],
+      })
+      console.log('runResult', runResult)
+      //setResults(runResult)
     } catch (e) {
-      console.error(e);
-      setResults('Error: ' + e.message);
+      console.error(e)
+      setResults('Error: ' + e.message)
     } finally {
-      setRunning(false);
+      setRunning(false)
     }
-  };
+  }
+
+  const addOutput = () => {
+    const addedOutput = outputs
+    addedOutput.push({script: '', satoshis: 1000})
+    setOutputs(addedOutput)
+    forceUpdate()
+    //console.log('outputs', outputs)
+  }
+
+  const setAnOutput = (value, i) => {
+    const changeOutput = outputs
+    changeOutput[i].script = value
+    setOutputs(changeOutput)
+    //console.log('value', value)
+    //console.log('xoutputs', outputs[i].script)
+    forceUpdate()
+  }
 
   const handleOpen = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
 
   const handleClose = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   const body = (
     <div style={modalStyle} className={classes.paper}>
       <Typography variant="h4" id="simple-modal-title" paragraph>
         New Transaction
       </Typography>
-      <TextField
-        label="XPRIV"
-        fullWidth
-        value={xpriv}
-        onChange={e => setXpriv(e.target.value)}
-        variant="outlined"
-        className={classes.textField}
-      />
-      <TextField
-        label="Parameter.."
-        fullWidth
-        //value={xpriv}
-        //onChange={e => setXpriv(e.target.value)}
-        variant="outlined"
-        className={classes.textField}
-      />
+      {outputs.map((x, i) => (
+        <TextField
+          key={i}
+          label={`Output #${i}`}
+          fullWidth
+          value={x.script}
+          onChange={e => setAnOutput(e.target.value, i)}
+          variant="outlined"
+          className={classes.gap}
+        />
+      ))}
+      <Button
+        className={classes.run}
+        disabled={running}
+        onClick={addOutput}
+        color="secondary"
+        variant="contained"
+        className={classes.gap}>
+        Add Output
+      </Button>
+      <br />
       <Button
         className={classes.run}
         disabled={running}
@@ -115,7 +145,7 @@ const NewTransactionModal = () => {
       </Button>
       <pre className={classes.results}>{results}</pre>
     </div>
-  );
+  )
 
   return (
     <div>
@@ -133,7 +163,7 @@ const NewTransactionModal = () => {
         {body}
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default NewTransactionModal;
+export default NewTransactionModal
