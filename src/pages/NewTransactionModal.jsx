@@ -74,7 +74,16 @@ const NewTransactionModal = () => {
           },
         ],
       })
-      console.log('runResult', runResult)
+      const processResult = await utxoninja.processTransaction({
+        xprivKey: localStorage.xprivKey,
+        submittedTransaction: runResult.rawTx,
+        reference: runResult.referenceNumber,
+        //note: noteTextFieldValue,
+      });
+
+      console.log('processResult', processResult);
+      console.log('runResult', runResult);
+
       //setResults(runResult)
     } catch (e) {
       console.error(e)
