@@ -1,18 +1,27 @@
 import React, {useEffect, useState} from 'react';
 import utxoninja from 'utxoninja';
 import {Typography, TextField, Button} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
+
+const useStyles = makeStyles(
+  theme => ({
+    run: {
+      marginBottom: '1em',
+    },
+  }),
+  {name: 'Profile'},
+);
 
 const Profile = () => {
-  const [currentName, setCurrentName] = useState(false);
-  const [avatar, setAvatar] = useState(false);
-  const [paymail, setPaymail] = useState(false);
+  const classes = useStyles();
+  const [avatarName, setAvatarName] = useState('');
+  const [photoURL, setPhotoURL] = useState('');
+  const [paymail, setPaymail] = useState('');
   const [running, setRunning] = useState(false);
 
   useEffect(() => {
     handleGetAvatar();
     handleGetPaymail();
-    handleSetAvatar();
-    handleSetPaymail();
   }, []);
 
   const handleGetAvatar = async () => {
@@ -20,12 +29,14 @@ const Profile = () => {
       setRunning(true);
       const runResult = await utxoninja['getAvatar']({
         xprivKey: window.localStorage.xprivKey,
+        name: avatarName,
       });
       console.log('r', runResult);
-      setAvatar(runResult.photoURL);
+      setAvatarName(runResult.name);
+      setPhotoURL(runResult.photoURL);
     } catch (e) {
       console.error(e);
-      setAvatar('Error: ' + e.message);
+      setAvatarName('Error: ' + e.message);
     } finally {
       setRunning(false);
     }
@@ -36,7 +47,9 @@ const Profile = () => {
       setRunning(true);
       const runResult = await utxoninja['getPaymail']({
         xprivKey: window.localStorage.xprivKey,
+        paymail: paymail,
       });
+      console.log('p', runResult);
       setPaymail(runResult);
     } catch (e) {
       console.error(e);
@@ -46,32 +59,87 @@ const Profile = () => {
     }
   };
 
-  const handleSetAvatar =  () => {
+  const handleSetAvatar = async () => {
+    try {
+      setRunning(true);
+      const runResult = await utxoninja['setAvatarl']({
+        xprivKey: window.localStorage.xprivKey,
+      });
+      console.log('sa', runResult);
+      //setPaymail(runResult);
+    } catch (e) {
+      console.error(e);
+      //setAvatarName('Error: ' + e.message);
+    } finally {
+      setRunning(false);
+    }
   };
 
-  const handleSetPaymail =  () => {
-  };
-
-  const handleNameChange = () => {
-    alert();
+  const handleSetPaymail = async () => {
+    try {
+      setRunning(true);
+      const runResult = await utxoninja['setPaymail']({
+        xprivKey: window.localStorage.xprivKey,
+      });
+      console.log('sp', runResult);
+      //setPaymail(runResult);
+    } catch (e) {
+      console.error(e);
+      //setPaymail('Error: ' + e.message);
+    } finally {
+      setRunning(false);
+    }
   };
 
   return (
     <div>
       <Typography variant="h3">Profile</Typography>
 
-      <Typography>{avatar}</Typography>
+      <br />
+      <br />
+      <Typography variant="h5">Avatar</Typography>
+      <Typography>Name: {avatarName}</Typography>
+      <Typography>PhotoURL: {photoURL}</Typography>
+
+      <br />
+      <br />
+
+      <Typography variant="h5">Paymail</Typography>
       <Typography>{paymail}</Typography>
+
+      <br />
+      <br />
+
       <TextField
-        label="Enter XPRIV Key..."
+        label="Change Avatar"
         fullWidth
-        value={currentName}
-        onChange={e => setCurrentName(e.target.value)}
+        value={avatarName}
+        onChange={e => setAvatarName(e.target.value)}
         variant="outlined"
       />
+      <br />
+      <br />
 
-      <Button disabled={running} onClick={handleNameChange}>
-        Change Name
+      <TextField
+        label="Change Paymail"
+        fullWidth
+        value={paymail}
+        onChange={e => setPaymail(e.target.value)}
+        variant="outlined"
+      />
+      <br />
+      <br />
+
+      <Button
+        className={classes.run}
+        color="primary"
+        variant="contained"
+        disabled={running}
+        onClick={() => {
+          handleSetAvatar();
+          handleSetPaymail();
+        }}>
+        Save
       </Button>
     </div>
   );
