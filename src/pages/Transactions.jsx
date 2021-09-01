@@ -122,7 +122,7 @@ const Transactions = () => {
                     {Object.entries(x).map(([k, v], index) => {
                       return (
                         index < Object.entries(x).length / 2 && (
-                          <li>
+                          <li key={index}>
                             <div className={classes.entryLabel}>{k}: </div>
                             <div className={classes.entryValue}>{v}</div>
                           </li>
@@ -134,7 +134,7 @@ const Transactions = () => {
                     {Object.entries(x).map(([k, v], index) => {
                       return (
                         index >= Object.entries(x).length / 2 && (
-                          <li>
+                          <li key={index}>
                             <div className={classes.entryLabel}>{k}: </div>
                             <div className={classes.entryValue}>{v}</div>
                           </li>
