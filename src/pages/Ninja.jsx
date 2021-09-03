@@ -1,24 +1,24 @@
-import React, {useEffect, useState} from 'react';
-import utxoninja from 'utxoninja';
+import React, { useEffect, useState } from 'react'
+import utxoninja from 'utxoninja'
 import {
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography,
-} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import {Switch, Route, Redirect} from 'react-router-dom';
-import Transactions from './Transactions';
-import Commands from './Commands';
-import Settings from './Settings';
-import Profile from './Profile';
-import isKeyInvalid from '../utils/isKeyInvalid';
-import SettingsIcon from '@material-ui/icons/Settings';
-import CommandsIcon from '@material-ui/icons/Code';
-import TransactionsIcon from '@material-ui/icons/ListAlt';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+  Typography
+} from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import RefreshIcon from '@material-ui/icons/Refresh'
+import { Switch, Route, Redirect } from 'react-router-dom'
+import Transactions from './Transactions'
+import Commands from './Commands'
+import Settings from './Settings'
+import Profile from './Profile'
+import isKeyInvalid from '../utils/isKeyInvalid'
+import SettingsIcon from '@material-ui/icons/Settings'
+import CommandsIcon from '@material-ui/icons/Code'
+import TransactionsIcon from '@material-ui/icons/ListAlt'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 
 const useStyles = makeStyles(
   {
@@ -51,44 +51,44 @@ const useStyles = makeStyles(
     },
   },
   {name: 'Ninja'},
-);
+)
 
 const Ninja = ({history, location}) => {
-  const [running, setRunning] = useState(false);
-  const [currentBalance, setCurrentBalance] = useState(0);
-  const classes = useStyles();
+  const [running, setRunning] = useState(false)
+  const [currentBalance, setCurrentBalance] = useState(0)
+  const classes = useStyles()
 
   useEffect(() => {
-    getTotalValueRefreshClick();
-  }, []);
+    getTotalValueRefreshClick()
+  }, [])
 
   if (isKeyInvalid(window.localStorage.xprivKey)) {
-    return <Redirect to="/" />;
+    return <Redirect to='/' />
   }
 
   const getTotalValueRefreshClick = async () => {
     try {
-      setRunning(true);
+      setRunning(true)
       const runResult = await utxoninja['getTotalValue']({
         xprivKey: window.localStorage.xprivKey,
-      });
-      setCurrentBalance(runResult.total);
+      })
+      setCurrentBalance(runResult.total)
     } catch (e) {
-      console.error(e);
-      setCurrentBalance('Error: ' + e.message);
+      console.error(e)
+      setCurrentBalance('Error: ' + e.message)
     } finally {
-      setRunning(false);
+      setRunning(false)
     }
-  };
+  }
 
   const numberWithCommas = x => {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
 
   return (
     <div className={classes.content_wrap}>
       <div className={classes.logo_list_grid}>
-        <img src="/banner.png" className={classes.img} alt="" />
+        <img src='/banner.png' className={classes.img} alt='' />
         <List>
           <ListItem>
             <Typography>
@@ -166,18 +166,18 @@ const Ninja = ({history, location}) => {
             <ListItemText>Settings</ListItemText>
           </ListItem>
         </List>
-        <Typography color="textSecondary" align="center">
+        <Typography color='textSecondary' align='center'>
           You are a ninja
         </Typography>
       </div>
       <Switch>
-        <Route exact path="/ninja/transactions" component={Transactions} />
-        <Route exact path="/ninja/commands" component={Commands} />
-        <Route exact path="/ninja/profile" component={Profile} />
-        <Route exact path="/ninja/settings" component={Settings} />
+        <Route exact path='/ninja/transactions' component={Transactions} />
+        <Route exact path='/ninja/commands' component={Commands} />
+        <Route exact path='/ninja/profile' component={Profile} />
+        <Route exact path='/ninja/settings' component={Settings} />
       </Switch>
     </div>
-  );
-};
+  )
+}
 
-export default Ninja;
+export default Ninja

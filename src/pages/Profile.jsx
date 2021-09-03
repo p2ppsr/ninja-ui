@@ -1,95 +1,95 @@
-import React, {useEffect, useState} from 'react';
-import utxoninja from 'utxoninja';
-import {Typography, TextField, Button} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+import React, {useEffect, useState} from 'react'
+import utxoninja from 'utxoninja'
+import {Typography, TextField, Button} from '@material-ui/core'
+import {makeStyles} from '@material-ui/core/styles'
 
 const useStyles = makeStyles(
   theme => ({
-    run: {
-      marginBottom: '1em',
+    run: 
+      marginBottom: '1em'
     },
   }),
-  {name: 'Profile'},
-);
+  {name: 'Profile'}
+)
 
 const Profile = () => {
-  const classes = useStyles();
-  const [avatarName, setAvatarName] = useState('');
-  const [photoURL, setPhotoURL] = useState('');
-  const [paymail, setPaymail] = useState('');
-  const [running, setRunning] = useState(false);
+  const classes = useStyles()
+  const [avatarName, setAvatarName] = useState('')
+  const [photoURL, setPhotoURL] = useState('')
+  const [paymail, setPaymail] = useState('')
+  const [running, setRunning] = useState(false)
 
   useEffect(() => {
-    handleGetAvatar();
-    handleGetPaymail();
-  }, []);
+    handleGetAvatar()
+    handleGetPaymail()
+  }, [])
 
   const handleGetAvatar = async () => {
     try {
-      setRunning(true);
+      setRunning(true)
       const runResult = await utxoninja['getAvatar']({
         xprivKey: window.localStorage.xprivKey,
         name: avatarName,
-      });
-      console.log('r', runResult);
-      setAvatarName(runResult.name);
-      setPhotoURL(runResult.photoURL);
+      })
+      console.log('r', runResult)
+      setAvatarName(runResult.name)
+      setPhotoURL(runResult.photoURL)
     } catch (e) {
-      console.error(e);
-      setAvatarName('Error: ' + e.message);
+      console.error(e)
+      setAvatarName('Error: ' + e.message)
     } finally {
-      setRunning(false);
+      setRunning(false)
     }
-  };
+  }
 
   const handleGetPaymail = async () => {
     try {
-      setRunning(true);
+      setRunning(true)
       const runResult = await utxoninja['getPaymail']({
         xprivKey: window.localStorage.xprivKey,
         paymail: paymail,
-      });
-      console.log('p', runResult);
-      setPaymail(runResult);
+      })
+      console.log('p', runResult)
+      setPaymail(runResult)
     } catch (e) {
-      console.error(e);
-      setPaymail('Error: ' + e.message);
+      console.error(e)
+      setPaymail('Error: ' + e.message)
     } finally {
-      setRunning(false);
+      setRunning(false)
     }
-  };
+  }
 
   const handleSetAvatar = async () => {
     try {
-      setRunning(true);
+      setRunning(true)
       const runResult = await utxoninja['setAvatarl']({
         xprivKey: window.localStorage.xprivKey,
-      });
-      console.log('sa', runResult);
-      //setPaymail(runResult);
+      })
+      console.log('sa', runResult)
+      //setPaymail(runResult)
     } catch (e) {
-      console.error(e);
-      //setAvatarName('Error: ' + e.message);
+      console.error(e)
+      //setAvatarName('Error: ' + e.message)
     } finally {
-      setRunning(false);
+      setRunning(false)
     }
-  };
+  }
 
   const handleSetPaymail = async () => {
     try {
-      setRunning(true);
+      setRunning(true)
       const runResult = await utxoninja['setPaymail']({
         xprivKey: window.localStorage.xprivKey,
-      });
-      console.log('sp', runResult);
-      //setPaymail(runResult);
+      })
+      console.log('sp', runResult)
+      //setPaymail(runResult)
     } catch (e) {
-      console.error(e);
-      //setPaymail('Error: ' + e.message);
+      console.error(e)
+      //setPaymail('Error: ' + e.message)
     } finally {
-      setRunning(false);
+      setRunning(false)
     }
-  };
+  }
 
   return (
     <div>
@@ -136,13 +136,13 @@ const Profile = () => {
         variant="contained"
         disabled={running}
         onClick={() => {
-          handleSetAvatar();
-          handleSetPaymail();
+          handleSetAvatar()
+          handleSetPaymail()
         }}>
         Save
       </Button>
     </div>
-  );
-};
+  )
+}
 
-export default Profile;
+export default Profile
