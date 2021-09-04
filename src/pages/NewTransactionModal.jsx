@@ -14,8 +14,8 @@ import {
   Divider
 } from '@material-ui/core'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const useStyles = makeStyles(theme => ({
   list_item: {
@@ -33,7 +33,7 @@ const NewTransactionDialog = () => {
   const [feePerKb, setFeePerKb] = useState(500)
   const [rPuzzleInputSigningWIF, setRPuzzleInputSigningWIF] = useState('')
   const [running, setRunning] = useState(false)
-  const [labels, setLabels] = useState([''])
+  const [labels, setLabels] = useState([])
   const [outputs, setOutputs] = useState([{ script: '', satoshis: 0 }])
   const [, updateState] = React.useState()
   const forceUpdate = React.useCallback(() => updateState({}), [])
@@ -44,21 +44,21 @@ const NewTransactionDialog = () => {
       const runResult = await utxoninja.getTransactionWithOutputs({
         xprivKey: window.localStorage.xprivKey,
         outputs,
-        feePerKb: feePerKb,
-        rPuzzleInputSigningWIF: rPuzzleInputSigningWIF
+        feePerKb,
+        rPuzzleInputSigningWIF,
+        labels
       })
-      const processResult = await utxoninja.processOutgoingTransaction({
+      await utxoninja.processOutgoingTransaction({
         xprivKey: window.localStorage.xprivKey,
         submittedTransaction: runResult.rawTx,
         reference: runResult.referenceNumber,
-        note: note
+        note
       })
-      // console.log('runResult', runResult)
-      console.log('processResult', processResult)
-      toast('success')
+      toast.success('Success!')
+      setOpen(false)
     } catch (e) {
       console.error(e)
-      toast('Error: ' + e.message)
+      toast.error('Error: ' + e.message)
     } finally {
       setRunning(false)
     }
@@ -77,7 +77,6 @@ const NewTransactionDialog = () => {
       outputs[i].script = value
       return outputs
     })
-    // console.log('outputs', outputs);
     forceUpdate()
   }
 
@@ -86,8 +85,6 @@ const NewTransactionDialog = () => {
       outputs[i].satoshis = parseInt(value)
       return outputs
     })
-    // console.log('Object.keys(utxoninja)', Object.keys(utxoninja))
-    // console.log('outputs', outputs);
     forceUpdate()
   }
 
@@ -105,7 +102,6 @@ const NewTransactionDialog = () => {
     })
     forceUpdate()
   }
-
 
   const handleOpen = () => {
     setOpen(true)
@@ -164,7 +160,7 @@ const NewTransactionDialog = () => {
             Add Output
           </Button>
           <TextField
-            label={`Transaction note (optional)`}
+            label="Transaction note (optional)"
             fullWidth
             value={note}
             onChange={e => setNote(e.target.value)}
@@ -172,7 +168,7 @@ const NewTransactionDialog = () => {
             className={classes.gap}
           />
           <TextField
-            label={`feePerKb (default 500)`}
+            label="feePerKb (default 500)"
             fullWidth
             value={feePerKb}
             onChange={e => setFeePerKb(e.target.value)}
@@ -180,7 +176,7 @@ const NewTransactionDialog = () => {
             className={classes.gap}
           />
           <TextField
-            label={`rPuzzleInputSigningWIF`}
+            label="rPuzzleInputSigningWIF"
             fullWidth
             value={rPuzzleInputSigningWIF}
             onChange={e => setRPuzzleInputSigningWIF(e.target.value)}
