@@ -5,7 +5,7 @@ import {makeStyles} from '@material-ui/core/styles'
 
 const useStyles = makeStyles(
   {
-    run: {
+    gap: {
       marginBottom: '1em'
     },
   },
@@ -93,22 +93,14 @@ const Profile = () => {
 
   return (
     <div>
-      <Typography variant="h3">Profile</Typography>
+      <Typography variant="h3" className={classes.gap}>Profile</Typography>
 
-      <br />
-      <br />
       <Typography variant="h5">Avatar</Typography>
       <Typography>Name: {avatarName}</Typography>
-      <Typography>PhotoURL: {photoURL}</Typography>
-
-      <br />
-      <br />
+      <Typography className={classes.gap}>PhotoURL: {photoURL}</Typography>
 
       <Typography variant="h5">Paymail</Typography>
-      <Typography>{paymail}</Typography>
-
-      <br />
-      <br />
+      <Typography className={classes.gap}>{paymail}</Typography>
 
       <TextField
         label="Change Avatar"
@@ -116,9 +108,17 @@ const Profile = () => {
         value={avatarName}
         onChange={e => setAvatarName(e.target.value)}
         variant="outlined"
+        className={classes.gap}
       />
-      <br />
-      <br />
+
+      <TextField
+        label="Change PhotoURL"
+        fullWidth
+        value={photoURL}
+        onChange={e => setPhotoURL(e.target.value)}
+        variant="outlined"
+        className={classes.gap}
+      />
 
       <TextField
         label="Change Paymail"
@@ -126,12 +126,11 @@ const Profile = () => {
         value={paymail}
         onChange={e => setPaymail(e.target.value)}
         variant="outlined"
+        className={classes.gap}
       />
-      <br />
-      <br />
 
       <Button
-        className={classes.run}
+        className={classes.gap}
         color="primary"
         variant="contained"
         disabled={running}
