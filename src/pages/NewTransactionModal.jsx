@@ -29,6 +29,8 @@ const NewTransactionDialog = () => {
   const [open, setOpen] = useState(false)
   const [running, setRunning] = useState(false)
   const [outputs, setOutputs] = useState([{ script: '', satoshis: 0 }])
+  const [, updateState] = React.useState()
+  const forceUpdate = React.useCallback(() => updateState({}), [])
 
   const getTransactionWithOutputsClick = async () => {
     try {
@@ -57,6 +59,7 @@ const NewTransactionDialog = () => {
   }
 
   const addOutput = () => {
+    forceUpdate()
     setOutputs(outputs => {
       outputs.push({ script: '', satoshis: 1000 })
       return outputs
@@ -68,6 +71,8 @@ const NewTransactionDialog = () => {
       outputs[i].script = value
       return outputs
     })
+    console.log('outputs', outputs);
+    forceUpdate()
   }
 
   const setOutputAmount = (value, i) => {
@@ -75,6 +80,8 @@ const NewTransactionDialog = () => {
       outputs[i].satoshis = value
       return outputs
     })
+    console.log('outputs', outputs);
+    forceUpdate()
   }
 
   const handleOpen = () => {
