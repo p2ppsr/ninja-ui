@@ -39,7 +39,7 @@ const NewTransactionDialog = () => {
         xprivKey: window.localStorage.xprivKey,
         outputs
       })
-      const processResult = await utxoninja.processTransaction({
+      const processResult = await utxoninja.processOutgoingTransaction({
         xprivKey: window.localStorage.xprivKey,
         submittedTransaction: runResult.rawTx,
         reference: runResult.referenceNumber
@@ -77,9 +77,10 @@ const NewTransactionDialog = () => {
 
   const setOutputAmount = (value, i) => {
     setOutputs(outputs => {
-      outputs[i].satoshis = value
+      outputs[i].satoshis = parseInt(value)
       return outputs
     })
+    console.log('Object.keys(utxoninja)', Object.keys(utxoninja))
     console.log('outputs', outputs);
     forceUpdate()
   }
