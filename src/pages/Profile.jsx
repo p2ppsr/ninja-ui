@@ -1,16 +1,13 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import utxoninja from 'utxoninja'
-import {Typography, TextField, Button} from '@material-ui/core'
-import {makeStyles} from '@material-ui/core/styles'
+import { Typography, TextField, Button, Divider } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 
-const useStyles = makeStyles(
-  {
-    gap: {
-      marginBottom: '1em'
-    },
-  },
-  {name: 'Profile'}
-)
+const useStyles = makeStyles({
+  gap: {
+    marginBottom: '1em'
+  }
+}, { name: 'Profile' })
 
 const Profile = () => {
   const classes = useStyles()
@@ -27,16 +24,14 @@ const Profile = () => {
   const handleGetAvatar = async () => {
     try {
       setRunning(true)
-      const runResult = await utxoninja['getAvatar']({
-        xprivKey: window.localStorage.xprivKey,
-        name: avatarName,
+      const runResult = await utxoninja.getAvatar({
+        xprivKey: window.localStorage.xprivKey
       })
       console.log('r', runResult)
       setAvatarName(runResult.name)
       setPhotoURL(runResult.photoURL)
     } catch (e) {
       console.error(e)
-      setAvatarName('Error: ' + e.message)
     } finally {
       setRunning(false)
     }
@@ -45,15 +40,13 @@ const Profile = () => {
   const handleGetPaymail = async () => {
     try {
       setRunning(true)
-      const runResult = await utxoninja['getPaymail']({
-        xprivKey: window.localStorage.xprivKey,
-        paymail: paymail,
+      const runResult = await utxoninja.getPaymail({
+        xprivKey: window.localStorage.xprivKey
       })
       console.log('p', runResult)
       setPaymail(runResult)
     } catch (e) {
       console.error(e)
-      setPaymail('Error: ' + e.message)
     } finally {
       setRunning(false)
     }
@@ -62,14 +55,13 @@ const Profile = () => {
   const handleSetAvatar = async () => {
     try {
       setRunning(true)
-      const runResult = await utxoninja['setAvatarl']({
+      await utxoninja.setAvatar({
         xprivKey: window.localStorage.xprivKey,
+        name: avatarName,
+        photoURL
       })
-      console.log('sa', runResult)
-      //setPaymail(runResult)
     } catch (e) {
       console.error(e)
-      //setAvatarName('Error: ' + e.message)
     } finally {
       setRunning(false)
     }
@@ -78,14 +70,12 @@ const Profile = () => {
   const handleSetPaymail = async () => {
     try {
       setRunning(true)
-      const runResult = await utxoninja['setPaymail']({
+      await utxoninja.setPaymail({
         xprivKey: window.localStorage.xprivKey,
+        paymail
       })
-      console.log('sp', runResult)
-      //setPaymail(runResult)
     } catch (e) {
       console.error(e)
-      //setPaymail('Error: ' + e.message)
     } finally {
       setRunning(false)
     }
@@ -93,52 +83,73 @@ const Profile = () => {
 
   return (
     <div>
-      <Typography variant="h3" className={classes.gap}>Profile</Typography>
+      <Typography variant='h3' className={classes.gap}>Profile</Typography>
 
-      <Typography variant="h5">Avatar</Typography>
+      <Typography variant='h5'>Avatar</Typography>
       <Typography>Name: {avatarName}</Typography>
       <Typography className={classes.gap}>PhotoURL: {photoURL}</Typography>
 
-      <Typography variant="h5">Paymail</Typography>
+      <Typography variant='h5'>Paymail</Typography>
       <Typography className={classes.gap}>{paymail}</Typography>
 
+      <Divider />
+      <br />
+      <br />
+
+      <Typography variant='h5' paragraph>Edit Avatar</Typography>
       <TextField
-        label="Change Avatar"
+        label='Change Name'
         fullWidth
         value={avatarName}
         onChange={e => setAvatarName(e.target.value)}
-        variant="outlined"
+        variant='outlined'
         className={classes.gap}
       />
 
       <TextField
-        label="Change PhotoURL"
+        label='Change PhotoURL'
         fullWidth
         value={photoURL}
         onChange={e => setPhotoURL(e.target.value)}
-        variant="outlined"
-        className={classes.gap}
-      />
-
-      <TextField
-        label="Change Paymail"
-        fullWidth
-        value={paymail}
-        onChange={e => setPaymail(e.target.value)}
-        variant="outlined"
+        variant='outlined'
         className={classes.gap}
       />
 
       <Button
         className={classes.gap}
-        color="primary"
-        variant="contained"
+        color='primary'
+        variant='contained'
         disabled={running}
         onClick={() => {
           handleSetAvatar()
+        }}
+      >
+        Save Avatar
+      </Button>
+
+      <Divider />
+      <br />
+
+      <Typography variant='h5' paragraph>Edit Paymail</Typography>
+      <TextField
+        label='Change Paymail'
+        fullWidth
+        value={paymail}
+        onChange={e => setPaymail(e.target.value)}
+        variant='outlined'
+        className={classes.gap}
+      />
+
+      <Button
+        className={classes.gap}
+        color='primary'
+        variant='contained'
+        disabled={running}
+        onClick={() => {
           handleSetPaymail()
-        }}>
-        Save
+        }}
+      >
+        Save Paymail
       </Button>
     </div>
   )
