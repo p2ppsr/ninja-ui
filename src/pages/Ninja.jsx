@@ -1,23 +1,24 @@
-import React, {useEffect, useState} from 'react';
-import utxoninja from 'utxoninja';
+import React, { useEffect, useState } from 'react'
+import utxoninja from 'utxoninja'
 import {
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography,
-} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import {Switch, Route, Redirect} from 'react-router-dom';
-import Transactions from './Transactions';
-import Commands from './Commands';
-import NewTransactionModal from './NewTransactionModal';
-import Settings from './Settings';
-import isKeyInvalid from '../utils/isKeyInvalid';
-import SettingsIcon from '@material-ui/icons/Settings';
-import CommandsIcon from '@material-ui/icons/Code';
-import TransactionsIcon from '@material-ui/icons/ListAlt';
+  Typography
+} from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import RefreshIcon from '@material-ui/icons/Refresh'
+import { Switch, Route, Redirect } from 'react-router-dom'
+import Transactions from './Transactions'
+import Commands from './Commands'
+import Settings from './Settings'
+import Profile from './Profile'
+import isKeyInvalid from '../utils/isKeyInvalid'
+import SettingsIcon from '@material-ui/icons/Settings'
+import CommandsIcon from '@material-ui/icons/Code'
+import TransactionsIcon from '@material-ui/icons/ListAlt'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 
 const useStyles = makeStyles(
   {
@@ -62,7 +63,7 @@ const Ninja = ({history, location}) => {
   }, []);
 
   if (isKeyInvalid(window.localStorage.xprivKey)) {
-    return <Redirect to="/" />;
+    return <Redirect to='/' />
   }
 
   const getTotalValueRefreshClick = async () => {
@@ -87,7 +88,7 @@ const Ninja = ({history, location}) => {
   return (
     <div className={classes.content_wrap}>
       <div className={classes.logo_list_grid}>
-        <img src="/banner.png" className={classes.img} alt="" />
+        <img src='/banner.png' className={classes.img} alt='' />
         <List>
           <ListItem>
             <Typography>
@@ -132,6 +133,22 @@ const Ninja = ({history, location}) => {
             </ListItemIcon>
             <ListItemText>Commands</ListItemText>
           </ListItem>
+
+          <ListItem
+            button
+            selected={location.pathname === '/ninja/profile'}
+            className={classes.list_item}
+            onClick={() => history.push('/ninja/profile')}>
+            <ListItemIcon>
+              <AccountCircleIcon
+                color={
+                  location.pathname === '/ninja/profile' ? 'primary' : undefined
+                }
+              />
+            </ListItemIcon>
+            <ListItemText>Profile</ListItemText>
+          </ListItem>
+
           <ListItem
             button
             selected={location.pathname === '/ninja/settings'}
@@ -148,16 +165,16 @@ const Ninja = ({history, location}) => {
             </ListItemIcon>
             <ListItemText>Settings</ListItemText>
           </ListItem>
-          <NewTransactionModal /> 
         </List>
-        <Typography color="textSecondary" align="center">
+        <Typography color='textSecondary' align='center'>
           You are a ninja
         </Typography>
       </div>
       <Switch>
-        <Route exact path="/ninja/transactions" component={Transactions} />
-        <Route exact path="/ninja/commands" component={Commands} />
-        <Route exact path="/ninja/settings" component={Settings} />
+        <Route exact path='/ninja/transactions' component={Transactions} />
+        <Route exact path='/ninja/commands' component={Commands} />
+        <Route exact path='/ninja/profile' component={Profile} />
+        <Route exact path='/ninja/settings' component={Settings} />
       </Switch>
     </div>
   );
