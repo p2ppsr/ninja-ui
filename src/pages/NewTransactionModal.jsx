@@ -14,6 +14,8 @@ import {
   Divider
 } from '@material-ui/core'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const useStyles = makeStyles(theme => ({
   list_item: {
@@ -27,7 +29,11 @@ const useStyles = makeStyles(theme => ({
 const NewTransactionDialog = () => {
   const classes = useStyles()
   const [open, setOpen] = useState(false)
+  const [note, setNote] = useState('')
+  const [feePerKb, setFeePerKb] = useState(500)
+  const [rPuzzleInputSigningWIF, setRPuzzleInputSigningWIF] = useState('')
   const [running, setRunning] = useState(false)
+  const [labels, setLabels] = useState([''])
   const [outputs, setOutputs] = useState([{ script: '', satoshis: 0 }])
   const [, updateState] = React.useState()
   const forceUpdate = React.useCallback(() => updateState({}), [])
@@ -37,33 +43,33 @@ const NewTransactionDialog = () => {
       setRunning(true)
       const runResult = await utxoninja.getTransactionWithOutputs({
         xprivKey: window.localStorage.xprivKey,
-        outputs
+        outputs,
+        feePerKb: feePerKb,
+        rPuzzleInputSigningWIF: rPuzzleInputSigningWIF
       })
       const processResult = await utxoninja.processOutgoingTransaction({
         xprivKey: window.localStorage.xprivKey,
         submittedTransaction: runResult.rawTx,
-        reference: runResult.referenceNumber
-        // note: noteTextFieldValue,
+        reference: runResult.referenceNumber,
+        note: note
       })
-
+      // console.log('runResult', runResult)
       console.log('processResult', processResult)
-      console.log('runResult', runResult)
-      window.alert('success')
-      setOpen(false)
+      toast('success')
     } catch (e) {
       console.error(e)
-      window.alert('Error: ' + e.message)
+      toast('Error: ' + e.message)
     } finally {
       setRunning(false)
     }
   }
 
   const addOutput = () => {
-    forceUpdate()
     setOutputs(outputs => {
       outputs.push({ script: '', satoshis: 1000 })
       return outputs
     })
+    forceUpdate()
   }
 
   const setOutputScript = (value, i) => {
@@ -71,7 +77,7 @@ const NewTransactionDialog = () => {
       outputs[i].script = value
       return outputs
     })
-    console.log('outputs', outputs);
+    // console.log('outputs', outputs);
     forceUpdate()
   }
 
@@ -80,10 +86,26 @@ const NewTransactionDialog = () => {
       outputs[i].satoshis = parseInt(value)
       return outputs
     })
-    console.log('Object.keys(utxoninja)', Object.keys(utxoninja))
-    console.log('outputs', outputs);
+    // console.log('Object.keys(utxoninja)', Object.keys(utxoninja))
+    // console.log('outputs', outputs);
     forceUpdate()
   }
+
+  const addLabel = () => {
+    setLabels(labels => {
+      labels.push('')
+      return labels
+    })
+    forceUpdate()
+  }
+  const handleSetLabels = (value, i) => {
+    setLabels(labels => {
+      labels[i] = value
+      return labels
+    })
+    forceUpdate()
+  }
+
 
   const handleOpen = () => {
     setOpen(true)
@@ -133,13 +155,59 @@ const NewTransactionDialog = () => {
             </div>
           ))}
           <Button
-            className={classes.run}
+            className={`${classes.run} ${classes.gap}`}
             disabled={running}
             onClick={addOutput}
             color='primary'
             variant='outlined'
           >
             Add Output
+          </Button>
+          <TextField
+            label={`Transaction note (optional)`}
+            fullWidth
+            value={note}
+            onChange={e => setNote(e.target.value)}
+            variant='outlined'
+            className={classes.gap}
+          />
+          <TextField
+            label={`feePerKb (default 500)`}
+            fullWidth
+            value={feePerKb}
+            onChange={e => setFeePerKb(e.target.value)}
+            variant='outlined'
+            className={classes.gap}
+          />
+          <TextField
+            label={`rPuzzleInputSigningWIF`}
+            fullWidth
+            value={rPuzzleInputSigningWIF}
+            onChange={e => setRPuzzleInputSigningWIF(e.target.value)}
+            variant='outlined'
+            className={classes.gap}
+          />
+          {labels.map((x, i) => (
+            <div key={i}>
+              <TextField
+                label={`Label #${i}`}
+                fullWidth
+                value={x}
+                onChange={e => handleSetLabels(e.target.value, i)}
+                variant='outlined'
+                className={classes.gap}
+              />
+              <Divider />
+            </div>
+          ))}
+          <Button
+            className={`${classes.run} ${classes.gap}`}
+            disabled={running}
+            onClick={addLabel}
+            color='primary'
+            variant='outlined'
+          >
+            Add Label
           </Button>
         </DialogContent>
         <DialogActions>
@@ -153,6 +221,7 @@ const NewTransactionDialog = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <ToastContainer />
     </div>
   )
 }
