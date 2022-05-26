@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import utxoninja from 'utxoninja'
 import {
   Typography,
   TextField,
@@ -27,9 +26,8 @@ const useStyles = makeStyles(theme => ({
   }
 }), { name: 'Commands' })
 
-const possibleCommands = Object.keys(utxoninja)
-
 const Commands = () => {
+  const possibleCommands = Object.keys(window.Ninja)
   const classes = useStyles()
   const [command, setCommand] = useState(possibleCommands[0])
   const [params, setParams] = useState('')
@@ -42,8 +40,7 @@ const Commands = () => {
     try {
       setRunning(true)
       const parsedParams = params ? JSON.parse(params) : {}
-      const runResult = await utxoninja[command]({
-        xprivKey: window.localStorage.xprivKey,
+      const runResult = await window.Ninja[command]({
         ...parsedParams
       })
       setResults(JSON.stringify(runResult, null, 2))

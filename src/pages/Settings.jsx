@@ -5,7 +5,7 @@ const Settings = ({ history }) => {
   const [showKey, setShowKey] = useState(false)
 
   const handleForgetKeyClick = () => {
-    delete window.localStorage.xprivKey
+    localStorage.clear()
     history.push('/')
   }
 

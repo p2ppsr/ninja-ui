@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import utxoninja from 'utxoninja'
 import { Typography, TextField, Button, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -24,10 +23,7 @@ const Profile = () => {
   const handleGetAvatar = async () => {
     try {
       setRunning(true)
-      const runResult = await utxoninja.getAvatar({
-        xprivKey: window.localStorage.xprivKey
-      })
-      console.log('r', runResult)
+      const runResult = await window.Ninja.getAvatar()
       setAvatarName(runResult.name)
       setPhotoURL(runResult.photoURL)
     } catch (e) {
@@ -40,10 +36,7 @@ const Profile = () => {
   const handleGetPaymail = async () => {
     try {
       setRunning(true)
-      const runResult = await utxoninja.getPaymail({
-        xprivKey: window.localStorage.xprivKey
-      })
-      console.log('p', runResult)
+      const runResult = await window.Ninja.getPaymail()
       setPaymail(runResult)
     } catch (e) {
       console.error(e)
@@ -55,8 +48,7 @@ const Profile = () => {
   const handleSetAvatar = async () => {
     try {
       setRunning(true)
-      await utxoninja.setAvatar({
-        xprivKey: window.localStorage.xprivKey,
+      await window.Ninja.setAvatar({
         name: avatarName,
         photoURL
       })
@@ -70,8 +62,7 @@ const Profile = () => {
   const handleSetPaymail = async () => {
     try {
       setRunning(true)
-      await utxoninja.setPaymail({
-        xprivKey: window.localStorage.xprivKey,
+      await window.Ninja.setPaymail({
         paymail
       })
     } catch (e) {

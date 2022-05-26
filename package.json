@@ -12,7 +12,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
     "react-toastify": "^8.0.2",
-    "utxoninja": "^0.1.15"
+    "utxoninja": "^0.2.8"
   },
   "scripts": {
     "start": "react-scripts start",

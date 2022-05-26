@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import utxoninja from 'utxoninja'
+import UTXONinja from 'utxoninja'
 import {
   List,
   ListItem,
@@ -58,32 +58,37 @@ const Ninja = ({history, location}) => {
   const [currentBalance, setCurrentBalance] = useState(0);
   const classes = useStyles();
 
+  const getTotalValueRefreshClick = async () => {
+    try {
+      setRunning(true)
+      const runResult = await window.Ninja['getTotalValue']()
+      setCurrentBalance(runResult.total)
+    } catch (e) {
+      console.error(e);
+      setCurrentBalance('Error: ' + e.message)
+    } finally {
+      setRunning(false)
+    }
+  };
+
   useEffect(() => {
     getTotalValueRefreshClick();
   }, []);
 
-  if (isKeyInvalid(window.localStorage.xprivKey)) {
+  if (isKeyInvalid(window.localStorage.privateKey)) {
     return <Redirect to='/' />
   }
-
-  const getTotalValueRefreshClick = async () => {
-    try {
-      setRunning(true);
-      const runResult = await utxoninja['getTotalValue']({
-        xprivKey: window.localStorage.xprivKey,
-      });
-      setCurrentBalance(runResult.total);
-    } catch (e) {
-      console.error(e);
-      setCurrentBalance('Error: ' + e.message);
-    } finally {
-      setRunning(false);
-    }
-  };
 
   const numberWithCommas = x => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
+
+  if (!window.Ninja) {
+    window.Ninja = new UTXONinja({
+      privateKey: window.localStorage.privateKey,
+      config: { dojoURL: window.localStorage.server }
+    })
+  }
 
   return (
     <div className={classes.content_wrap}>

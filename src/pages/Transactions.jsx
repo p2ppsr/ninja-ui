@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import ninja from 'utxoninja'
 import {Typography} from '@material-ui/core'
 import {makeStyles} from '@material-ui/core/styles'
 import Accordion from '@material-ui/core/Accordion'
@@ -87,9 +86,7 @@ const Transactions = () => {
 
   useEffect(() => {
     (async () => {
-      const result = await ninja.getTransactions({
-        xprivKey: window.localStorage.xprivKey,
-      })
+      const result = await window.Ninja.getTransactions()
       setTx(result.transactions)
     })()
   }, [])
