@@ -119,6 +119,16 @@ const Sweep = () => {
         ))}
       </div>
       <Button disabled={utxos.length < 1} onClick={handleSweep}>Sweep</Button>
+      <Button
+        onClick={async () => {
+          const result = await window.Ninja.getTransactionWithOutputs({
+            outputs: [{ script: '006a', satoshis: 0 }]
+          })
+          console.log(result)
+        }}
+      >
+        test
+      </Button>
     </div>
   )
 }
