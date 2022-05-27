@@ -27,7 +27,13 @@ const useStyles = makeStyles(theme => ({
 }), { name: 'Commands' })
 
 const Commands = () => {
-  const possibleCommands = Object.keys(window.Ninja)
+  const possibleCommands = Object.getOwnPropertyNames(
+    Object.getPrototypeOf(window.Ninja)
+  ).filter(m =>
+    'function' === typeof window.Ninja[m] &&
+    m !== 'constructor' &&
+    m !== 'createAuthriteRequest'
+  )
   const classes = useStyles()
   const [command, setCommand] = useState(possibleCommands[0])
   const [params, setParams] = useState('')
