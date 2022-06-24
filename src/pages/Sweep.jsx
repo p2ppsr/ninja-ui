@@ -79,7 +79,6 @@ const Sweep = () => {
     }
     console.log(inputs)
     // Create transaction redeeming selected UTXOs
-    debugger
     const result = await window.Ninja.getTransactionWithOutputs({ 
       inputs
     })

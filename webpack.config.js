@@ -25,9 +25,12 @@ module.exports = {
     })
   ],
   devServer: {
-    port: 3000, // you can change the port
+    port: 8088, // you can change the port
     client: {
       overlay: true // Show application errors
+    },
+    historyApiFallback: {
+      index: 'index.html'
     }
   },
   module: {

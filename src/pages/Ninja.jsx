@@ -12,6 +12,7 @@ import RefreshIcon from '@material-ui/icons/Refresh'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import Transactions from './Transactions'
 import Sweep from './Sweep'
+import Send from './Send'
 import Commands from './Commands'
 import Settings from './Settings'
 import Profile from './Profile'
@@ -141,6 +142,22 @@ const Ninja = ({history, location}) => {
           </ListItem>
           <ListItem
             button
+            selected={location.pathname === '/ninja/send'}
+            className={classes.list_item}
+            onClick={() => history.push('/ninja/send')}>
+            <ListItemIcon>
+              <TransactionsIcon
+                color={
+                  location.pathname === '/ninja/send'
+                    ? 'primary'
+                    : undefined
+                }
+              />
+            </ListItemIcon>
+            <ListItemText>Send</ListItemText>
+          </ListItem>
+          <ListItem
+            button
             selected={location.pathname === '/ninja/commands'}
             className={classes.list_item}
             onClick={() => history.push('/ninja/commands')}>
@@ -195,6 +212,7 @@ const Ninja = ({history, location}) => {
       <Switch>
         <Route exact path='/ninja/transactions' component={Transactions} />
         <Route exact path='/ninja/sweep' component={Sweep} />
+        <Route exact path='/ninja/send' component={Send} />
         <Route exact path='/ninja/commands' component={Commands} />
         <Route exact path='/ninja/profile' component={Profile} />
         <Route exact path='/ninja/settings' component={Settings} />
