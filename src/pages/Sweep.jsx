@@ -47,7 +47,7 @@ const Sweep = () => {
     for (let i in selectedUtxos) {
       const utxo = selectedUtxos[i]
       if (!inputs[utxo.txid]) {
-        inputs[utxo.txid] = await hashwrap(utxo.txid {
+        inputs[utxo.txid] = await hashwrap(utxo.txid, {
           network,
           taalApiKey: network === 'testnet'
             ? 'testnet_ba132cc4d5b2ebde7ed0ee0f6ee3f678'
