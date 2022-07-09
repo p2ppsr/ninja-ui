@@ -20,13 +20,17 @@ const Sweep = () => {
   const classes = useStyles()
   const [utxos, setUtxos] = useState([])
   const [key, setKey] = useState('')
+  const [network, setNetwork] = useState('mainnet')
 
   const handleGetUtxos = async () => {
-    const addr = bsv.Address.fromPrivateKey(bsv.PrivateKey.fromWIF(key))
-      .toString()
+    const add = bsv.Address.fromPrivateKey(bsv.PrivateKey.fromWIF(key))
+    const addr = add.toString()
+    const network = add.network.name
+    setNetwork(network)
+    const wocNet = network === 'testnet' ? 'test' : 'main'
     const got = await boomerang(
       'GET',
-      `https://api.whatsonchain.com/v1/bsv/main/address/${addr}/unspent`
+      `https://api.whatsonchain.com/v1/bsv/${wocNet}/address/${addr}/unspent`
     )
     setUtxos(got.map(x => ({
       txid: x.tx_hash,
@@ -43,7 +47,12 @@ const Sweep = () => {
     for (let i in selectedUtxos) {
       const utxo = selectedUtxos[i]
       if (!inputs[utxo.txid]) {
-        inputs[utxo.txid] = await hashwrap(utxo.txid)
+        inputs[utxo.txid] = await hashwrap(utxo.txid {
+          network,
+          taalApiKey: network === 'testnet'
+            ? 'testnet_ba132cc4d5b2ebde7ed0ee0f6ee3f678'
+            : 'mainnet_6c8f8c37afd5c45e09f62d083288a181'
+        })
         inputs[utxo.txid].outputsToRedeem = []
       }
       const tx = new bsv.Transaction()
