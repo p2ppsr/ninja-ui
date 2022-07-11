@@ -11,7 +11,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      filename: 'public/index.html',
+      template: 'public/index.html',
       inject: false
     }),
     new NodePolyfillPlugin(),
