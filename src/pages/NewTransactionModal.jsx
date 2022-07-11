@@ -14,8 +14,8 @@ import {
   Divider
 } from '@material-ui/core'
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const useStyles = makeStyles(theme => ({
   list_item: {
@@ -106,7 +106,6 @@ const NewTransactionDialog = () => {
     forceUpdate()
   }
 
-
   const handleOpen = () => {
     setOpen(true)
   }
@@ -164,7 +163,7 @@ const NewTransactionDialog = () => {
             Add Output
           </Button>
           <TextField
-            label={`Transaction note (optional)`}
+            label="Transaction note (optional)"
             fullWidth
             value={note}
             onChange={e => setNote(e.target.value)}
@@ -172,7 +171,7 @@ const NewTransactionDialog = () => {
             className={classes.gap}
           />
           <TextField
-            label={`feePerKb (default 500)`}
+            label="feePerKb (default 500)"
             fullWidth
             value={feePerKb}
             onChange={e => setFeePerKb(e.target.value)}
@@ -180,7 +179,7 @@ const NewTransactionDialog = () => {
             className={classes.gap}
           />
           <TextField
-            label={`rPuzzleInputSigningWIF`}
+            label="rPuzzleInputSigningWIF"
             fullWidth
             value={rPuzzleInputSigningWIF}
             onChange={e => setRPuzzleInputSigningWIF(e.target.value)}
@@ -221,7 +220,6 @@ const NewTransactionDialog = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <ToastContainer />
     </div>
   )
 }

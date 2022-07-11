@@ -6,11 +6,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   output: {
     path: path.join(__dirname, '/build'), // the bundle output path
-    filename: 'bundle.js' // the name of the bundle
+    filename: 'bundle.js', // the name of the bundle
+    publicPath: '/'
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'public/index.html' // to import index.html file inside index.js
+      filename: 'public/index.html',
+      inject: false
     }),
     new NodePolyfillPlugin(),
     new CopyWebpackPlugin({
