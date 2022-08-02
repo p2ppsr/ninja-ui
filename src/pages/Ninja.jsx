@@ -5,7 +5,8 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Typography
+  Typography,
+  CircularProgress
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import RefreshIcon from '@material-ui/icons/Refresh'
@@ -22,74 +23,76 @@ import CommandsIcon from '@material-ui/icons/Code'
 import TransactionsIcon from '@material-ui/icons/ListAlt'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 
-const useStyles = makeStyles(
-  {
-    content_wrap: {
-      margin: 'auto',
-      maxWidth: '1440px',
-      padding: '1em',
-      boxSizing: 'border-box',
-      display: 'grid',
-      gridTemplateColumns: 'auto 1fr',
-      gridGap: '2em',
-      '& > :first-child': {
-        minWidth: '15em',
-      },
-    },
-    logo_list_grid: {
-      display: 'grid',
-      gridTemplateRows: 'auto 1fr auto',
-    },
-    img: {
-      width: '13em',
-      margin: '1em auto',
-      justifySelf: 'center',
-    },
-    list_item: {
-      borderRadius: '2em',
-    },
-    refreshIcon: {
-      cursor: 'pointer',
-    },
+const useStyles = makeStyles({
+  content_wrap: {
+    margin: 'auto',
+    maxWidth: '1440px',
+    padding: '1em',
+    boxSizing: 'border-box',
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr',
+    gridGap: '2em',
+    '& > :first-child': {
+      minWidth: '15em'
+    }
   },
-  {name: 'Ninja'},
-);
+  logo_list_grid: {
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr auto'
+  },
+  img: {
+    width: '13em',
+    margin: '1em auto',
+    justifySelf: 'center'
+  },
+  list_item: {
+    borderRadius: '2em'
+  },
+  refreshIcon: {
+    cursor: 'pointer'
+  }
+}, { name: 'Ninja' })
 
-const Ninja = ({history, location}) => {
-  const [running, setRunning] = useState(false);
-  const [currentBalance, setCurrentBalance] = useState(0);
-  const classes = useStyles();
+const Ninja = ({ history, location }) => {
+  const [ninjaLoading, setNinjaLoading] = useState(true)
+  const [running, setRunning] = useState(false)
+  const [currentBalance, setCurrentBalance] = useState(0)
+  const classes = useStyles()
 
   const getTotalValueRefreshClick = async () => {
     try {
       setRunning(true)
-      const runResult = await window.Ninja['getTotalValue']()
+      const runResult = await window.Ninja.getTotalValue()
       setCurrentBalance(runResult.total)
     } catch (e) {
-      console.error(e);
+      console.error(e)
       setCurrentBalance('Error: ' + e.message)
     } finally {
       setRunning(false)
+      setNinjaLoading(false)
     }
-  };
-
-  useEffect(() => {
-    getTotalValueRefreshClick();
-  }, []);
-
-  if (isKeyInvalid(window.localStorage.privateKey)) {
-    return <Redirect to='/' />
   }
 
-  const numberWithCommas = x => {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
+  useEffect(() => {
+    (async () => {
+      if (isKeyInvalid(window.localStorage.privateKey)) {
+        history.push('/')
+        return
+      }
+      window.Ninja = new UTXONinja({
+        privateKey: window.localStorage.privateKey,
+        config: { dojoURL: window.localStorage.server }
+      })
+      await getTotalValueRefreshClick()
+    })()
+  }, [])
 
-  if (!window.Ninja) {
-    window.Ninja = new UTXONinja({
-      privateKey: window.localStorage.privateKey,
-      config: { dojoURL: window.localStorage.server }
-    })
+  const numberWithCommas = x => {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
+
+  if (ninjaLoading) {
+    return <div>loading...</div>
   }
 
   return (
@@ -102,17 +105,26 @@ const Ninja = ({history, location}) => {
               Current Balance:{' '}
               <b>{numberWithCommas(currentBalance)} Satoshis</b>
             </Typography>
-            <RefreshIcon
-              disabled={running}
+            {!running
+              ? (
+                <RefreshIcon
               onClick={getTotalValueRefreshClick}
               className={classes.refreshIcon}
             />
+              )
+                : (
+                  <CircularProgress
+              className={classes.refreshIcon}
+            />
+              )
+            }
           </ListItem>
           <ListItem
             button
             selected={location.pathname === '/ninja/transactions'}
             className={classes.list_item}
-            onClick={() => history.push('/ninja/transactions')}>
+            onClick={() => history.push('/ninja/transactions')}
+          >
             <ListItemIcon>
               <TransactionsIcon
                 color={
@@ -128,7 +140,8 @@ const Ninja = ({history, location}) => {
             button
             selected={location.pathname === '/ninja/sweep'}
             className={classes.list_item}
-            onClick={() => history.push('/ninja/sweep')}>
+            onClick={() => history.push('/ninja/sweep')}
+          >
             <ListItemIcon>
               <TransactionsIcon
                 color={
@@ -144,7 +157,8 @@ const Ninja = ({history, location}) => {
             button
             selected={location.pathname === '/ninja/send'}
             className={classes.list_item}
-            onClick={() => history.push('/ninja/send')}>
+            onClick={() => history.push('/ninja/send')}
+          >
             <ListItemIcon>
               <TransactionsIcon
                 color={
@@ -160,7 +174,8 @@ const Ninja = ({history, location}) => {
             button
             selected={location.pathname === '/ninja/commands'}
             className={classes.list_item}
-            onClick={() => history.push('/ninja/commands')}>
+            onClick={() => history.push('/ninja/commands')}
+          >
             <ListItemIcon>
               <CommandsIcon
                 color={
@@ -177,7 +192,8 @@ const Ninja = ({history, location}) => {
             button
             selected={location.pathname === '/ninja/profile'}
             className={classes.list_item}
-            onClick={() => history.push('/ninja/profile')}>
+            onClick={() => history.push('/ninja/profile')}
+          >
             <ListItemIcon>
               <AccountCircleIcon
                 color={
@@ -192,7 +208,8 @@ const Ninja = ({history, location}) => {
             button
             selected={location.pathname === '/ninja/settings'}
             className={classes.list_item}
-            onClick={() => history.push('/ninja/settings')}>
+            onClick={() => history.push('/ninja/settings')}
+          >
             <ListItemIcon>
               <SettingsIcon
                 color={
@@ -218,7 +235,7 @@ const Ninja = ({history, location}) => {
         <Route exact path='/ninja/settings' component={Settings} />
       </Switch>
     </div>
-  );
-};
+  )
+}
 
-export default Ninja;
+export default Ninja

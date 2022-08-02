@@ -44,14 +44,14 @@ const NewTransactionDialog = () => {
       const runResult = await utxoninja.getTransactionWithOutputs({
         xprivKey: window.localStorage.xprivKey,
         outputs,
-        feePerKb: feePerKb,
-        rPuzzleInputSigningWIF: rPuzzleInputSigningWIF
+        feePerKb,
+        rPuzzleInputSigningWIF
       })
       const processResult = await utxoninja.processOutgoingTransaction({
         xprivKey: window.localStorage.xprivKey,
         submittedTransaction: runResult.rawTx,
         reference: runResult.referenceNumber,
-        note: note
+        note
       })
       // console.log('runResult', runResult)
       console.log('processResult', processResult)
@@ -163,7 +163,7 @@ const NewTransactionDialog = () => {
             Add Output
           </Button>
           <TextField
-            label="Transaction note (optional)"
+            label='Transaction note (optional)'
             fullWidth
             value={note}
             onChange={e => setNote(e.target.value)}
@@ -171,7 +171,7 @@ const NewTransactionDialog = () => {
             className={classes.gap}
           />
           <TextField
-            label="feePerKb (default 500)"
+            label='feePerKb (default 500)'
             fullWidth
             value={feePerKb}
             onChange={e => setFeePerKb(e.target.value)}
@@ -179,7 +179,7 @@ const NewTransactionDialog = () => {
             className={classes.gap}
           />
           <TextField
-            label="rPuzzleInputSigningWIF"
+            label='rPuzzleInputSigningWIF'
             fullWidth
             value={rPuzzleInputSigningWIF}
             onChange={e => setRPuzzleInputSigningWIF(e.target.value)}

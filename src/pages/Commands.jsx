@@ -30,7 +30,7 @@ const Commands = () => {
   const possibleCommands = Object.getOwnPropertyNames(
     Object.getPrototypeOf(window.Ninja)
   ).filter(m =>
-    'function' === typeof window.Ninja[m] &&
+    typeof window.Ninja[m] === 'function' &&
     m !== 'constructor' &&
     m !== 'createAuthriteRequest'
   )
@@ -74,7 +74,7 @@ const Commands = () => {
         className={classes.params}
         multiline
         label='Params (JSON)'
-        rows={10}
+        minRows={10}
         fullWidth
         placeholder='{"newPaymail":"who@johngalt.is"}'
         value={params}

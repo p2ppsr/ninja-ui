@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { Button, Typography, TextField } from '@material-ui/core'
-import {makeStyles} from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import atfinder from 'atfinder'
 import bsv from 'bsv'
 import { getPaymentAddress } from 'sendover'
@@ -8,7 +8,7 @@ import { getPaymentAddress } from 'sendover'
 const useStyles = makeStyles(
   theme => ({
   }),
-  {name: 'Sweep'},
+  { name: 'Sweep' }
 )
 
 const Sweep = () => {
@@ -19,26 +19,27 @@ const Sweep = () => {
   const handleSend = async () => {
     const client = window.Ninja.authriteClient
     const { identityKey } = await atfinder.getCertifiedKey(paymail, client)
-    console.log(identityKey)
+    console.log(`identityKey for ${paymail} : ${identityKey}`)
     const ourPaymail = await window.Ninja.getPaymail()
     const derivationPrefix = require('crypto')
       .randomBytes(10)
       .toString('base64')
-     const suffix = require('crypto')
+    const suffix = require('crypto')
       .randomBytes(10)
-       .toString('base64')
-    const invoiceNumber = `3241645161d8 ${paymail} ${derivationPrefix} ${suffix}`
-      // Derive the public key used for creating the output script
-      const derivedAddress = getPaymentAddress({
-        senderPrivateKey: client.clientPrivateKey,
-        recipientPublicKey: identityKey,
-        invoiceNumber,
-        returnType: 'address'
-      })
-      // Create an output script that can only be unlocked with the corresponding derived private key
+      .toString('base64')
+    const invoiceNumber = `2-3241645161d8-${paymail} ${derivationPrefix} ${suffix}`
+    console.log(`Deriving key with invoice number: ${invoiceNumber}`)
+    // Derive the public key used for creating the output script
+    const derivedAddress = getPaymentAddress({
+      senderPrivateKey: client.clientPrivateKey,
+      recipientPublicKey: identityKey,
+      invoiceNumber,
+      returnType: 'address'
+    })
+    // Create an output script that can only be unlocked with the corresponding derived private key
     const script = new bsv.Script(
-          bsv.Script.fromAddress(derivedAddress)
-        ).toHex()
+      bsv.Script.fromAddress(derivedAddress)
+    ).toHex()
     const tx = await window.Ninja.getTransactionWithOutputs({
       outputs: [{
         script,
@@ -63,7 +64,7 @@ const Sweep = () => {
 
   return (
     <div>
-      <Typography variant="h3">Send</Typography>
+      <Typography variant='h3'>Send</Typography>
       <TextField
         label='Paymail'
         onChange={e => setPaymail(e.target.value)}

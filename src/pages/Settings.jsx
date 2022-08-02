@@ -5,6 +5,7 @@ const Settings = ({ history }) => {
   const [showKey, setShowKey] = useState(false)
 
   const handleForgetKeyClick = () => {
+    window.Ninja = undefined
     localStorage.clear()
     history.push('/')
   }
@@ -17,7 +18,7 @@ const Settings = ({ history }) => {
       {showKey
         ? (
           <>
-            <Typography>{window.localStorage.xprivKey}</Typography>
+            <Typography>{window.localStorage.privateKey}</Typography>
             <Button onClick={() => setShowKey(false)}>Hide Key</Button>
           </>
           )

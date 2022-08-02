@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { Checkbox, Button, Typography, TextField } from '@material-ui/core'
-import {makeStyles} from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import boomerang from 'boomerang-http'
 import bsv from 'bsv'
 import hashwrap from 'hash-wrap'
@@ -13,7 +13,7 @@ const useStyles = makeStyles(
       gridGap: theme.spacing(2)
     }
   }),
-  {name: 'Sweep'},
+  { name: 'Sweep' }
 )
 
 const Sweep = () => {
@@ -44,7 +44,7 @@ const Sweep = () => {
     const selectedUtxos = utxos.filter(x => x.selected)
     console.log('selected', selectedUtxos)
     const inputs = {}
-    for (let i in selectedUtxos) {
+    for (const i in selectedUtxos) {
       const utxo = selectedUtxos[i]
       if (!inputs[utxo.txid]) {
         inputs[utxo.txid] = await hashwrap(utxo.txid, {
@@ -57,24 +57,24 @@ const Sweep = () => {
       }
       const tx = new bsv.Transaction()
       tx.from(new bsv.Transaction.UnspentOutput({
-    txid: utxo.txid,
-    outputIndex: utxo.vout,
-    script: bsv.Script.fromAddress(bsv.Address.fromPrivateKey(
-        bsv.PrivateKey.fromWIF(key)
-      )),
-    satoshis: utxo.satoshis
-  }))
+        txid: utxo.txid,
+        outputIndex: utxo.vout,
+        script: bsv.Script.fromAddress(bsv.Address.fromPrivateKey(
+          bsv.PrivateKey.fromWIF(key)
+        )),
+        satoshis: utxo.satoshis
+      }))
       const sig = bsv.Transaction.Sighash.sign(
-      tx,
-      bsv.PrivateKey.fromWIF(key),
-      bsv.crypto.Signature.SIGHASH_FORKID |
+        tx,
+        bsv.PrivateKey.fromWIF(key),
+        bsv.crypto.Signature.SIGHASH_FORKID |
         bsv.crypto.Signature.SIGHASH_NONE |
         bsv.crypto.Signature.SIGHASH_ANYONECANPAY,
-      0, // Always 0
-      bsv.Script.fromAddress(bsv.Address.fromPrivateKey(
-        bsv.PrivateKey.fromWIF(key)
-      )),
-      new bsv.crypto.BN(utxo.satoshis)
+        0, // Always 0
+        bsv.Script.fromAddress(bsv.Address.fromPrivateKey(
+          bsv.PrivateKey.fromWIF(key)
+        )),
+        new bsv.crypto.BN(utxo.satoshis)
       )
       const unlockingScript = bsv.Script.buildPublicKeyHashIn(
         bsv.PrivateKey.fromWIF(key).publicKey,
@@ -88,7 +88,7 @@ const Sweep = () => {
     }
     console.log(inputs)
     // Create transaction redeeming selected UTXOs
-    const result = await window.Ninja.getTransactionWithOutputs({ 
+    const result = await window.Ninja.getTransactionWithOutputs({
       inputs
     })
     console.log(result)
@@ -96,7 +96,7 @@ const Sweep = () => {
 
   return (
     <div>
-      <Typography variant="h3">Sweep</Typography>
+      <Typography variant='h3'>Sweep</Typography>
       <TextField
         label='WIF key'
         onChange={e => setKey(e.target.value)}
