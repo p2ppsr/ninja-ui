@@ -22,6 +22,7 @@ const Send = () => {
   const classes = useStyles()
   const [amount, setAmount] = useState('')
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
   const handleSend = async () => {
     try {
@@ -78,6 +79,7 @@ const Send = () => {
           }
         }
       })
+      setSuccess(true)
       toast.success('Payment sent! Restart Babbage Desktop.')
     } catch (e) {
       toast.error(e.message)
@@ -89,27 +91,46 @@ const Send = () => {
 
   return (
     <div>
-      <Typography variant='h3'>Send</Typography>
-      <Typography paragraph>
-        Ensure Babbage Desktop is open, or it will not work.
-      </Typography>
-      <TextField
-        label='Amount'
-        onChange={e => setAmount(e.target.value)}
-      />
-      <br />
-      <br />
-      <Button
-        disabled={loading}
-        onClick={handleSend}
-        variant='contained'
-        color='primary'
-      >
-        Send
-      </Button>
-      <br />
-      <br />
-      {loading && <LinearProgress />}
+      <Typography variant='h3' paragraph>Send</Typography>
+      {!success ? (
+        <>
+          <Typography paragraph>
+            Ensure Babbage Desktop is open, or it will not work.
+          </Typography>
+          <TextField
+            label='Amount (satoshis)'
+            type='number'
+            onChange={e => setAmount(e.target.value)}
+          />
+          <br />
+          <br />
+          <Button
+            disabled={loading}
+            onClick={handleSend}
+            variant='contained'
+            color='primary'
+          >
+            Send
+          </Button>
+          <br />
+          <br />
+          {loading && <LinearProgress />}
+        </>) : (
+        <>
+          <Typography paragraph>
+            You sent <b>{amount} satoshis</b> to Babbage Desktop! Restart to see your balance.
+          </Typography>
+          <Button
+            onClick={() => {
+              setSuccess(false)
+              setAmont('')
+            }}
+            variant='contained'
+          >
+            Done
+          </Button>
+        </>
+      )}
     </div>
   )
 }
