@@ -1,9 +1,16 @@
 import React, { useState } from 'react'
-import { Button, Typography, TextField } from '@material-ui/core'
+import {
+  Button,
+  Typography,
+  LinearProgress,
+  TextField
+} from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import atfinder from 'atfinder'
 import bsv from 'bsv'
 import { getPaymentAddress } from 'sendover'
+import { isAuthenticated, createAction } from '@babbage/sdk'
+import { toast } from 'react-toastify'
 
 const useStyles = makeStyles(
   theme => ({
@@ -11,71 +18,100 @@ const useStyles = makeStyles(
   { name: 'Sweep' }
 )
 
-const Sweep = () => {
+const Send = () => {
   const classes = useStyles()
-  const [paymail, setPaymail] = useState('')
   const [amount, setAmount] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSend = async () => {
-    const client = window.Ninja.authriteClient
-    const { identityKey } = await atfinder.getCertifiedKey(paymail, client)
-    console.log(`identityKey for ${paymail} : ${identityKey}`)
-    const ourPaymail = await window.Ninja.getPaymail()
-    const derivationPrefix = require('crypto')
-      .randomBytes(10)
-      .toString('base64')
-    const suffix = require('crypto')
-      .randomBytes(10)
-      .toString('base64')
-    const invoiceNumber = `2-3241645161d8-${paymail} ${derivationPrefix} ${suffix}`
-    console.log(`Deriving key with invoice number: ${invoiceNumber}`)
-    // Derive the public key used for creating the output script
-    const derivedAddress = getPaymentAddress({
-      senderPrivateKey: client.clientPrivateKey,
-      recipientPublicKey: identityKey,
-      invoiceNumber,
-      returnType: 'address'
-    })
-    // Create an output script that can only be unlocked with the corresponding derived private key
-    const script = new bsv.Script(
-      bsv.Script.fromAddress(derivedAddress)
-    ).toHex()
-    const tx = await window.Ninja.getTransactionWithOutputs({
-      outputs: [{
+    try {
+      setLoading(true)
+      const authenticated = await isAuthenticated()
+      if (!authenticated) {
+        throw new Error('No MetaNet user is authenticated!')
+      }
+      const intermediateKey = bsv.PrivateKey.fromRandom()
+      const script = new bsv.Script(
+        bsv.Script.fromAddress(bsv.Address.fromPrivateKey(intermediateKey))
+      )
+      const fundingTx = await window.Ninja.getTransactionWithOutputs({
+        outputs: [{
+          script: script.toHex(),
+          satoshis: parseInt(amount)
+        }]
+      })
+      const fundingTxid = new bsv.Transaction(fundingTx.rawTx).id
+      const tx = new bsv.Transaction()
+      tx.from(new bsv.Transaction.UnspentOutput({
+        txid: fundingTxid,
+        outputIndex: 0,
         script,
         satoshis: parseInt(amount)
-      }]
-    })
-    tx.outputs = {
-      0: {
-        suffix
-      }
+      }))
+      console.log('got tx', tx)
+      let sighashType = bsv.crypto.Signature.SIGHASH_FORKID |
+        bsv.crypto.Signature.SIGHASH_NONE |
+        bsv.crypto.Signature.SIGHASH_ANYONECANPAY
+      const signature = bsv.Transaction.Sighash.sign(
+        tx,
+        intermediateKey,
+        sighashType,
+        0, // input index
+        script, // locking script
+        new bsv.crypto.BN(parseInt(amount))
+      )
+      console.log('got sig', signature)
+      const unlockingScript = bsv.Script.buildPublicKeyHashIn(
+        intermediateKey.publicKey,
+        signature,
+        signature.nhashtype
+      ).toHex()
+      await createAction({
+        description: 'Receive money from the Ninja UI',
+        inputs: {
+          [fundingTxid]: {
+            ...fundingTx,
+            outputsToRedeem: [{
+              index: 0,
+              unlockingScript
+            }]
+          }
+        }
+      })
+      toast.success('Payment sent! Restart Babbage Desktop.')
+    } catch (e) {
+      toast.error(e.message)
+      console.error(e)
+    } finally {
+      setLoading(false)
     }
-    const request = {
-      protocol: '3241645161d8',
-      senderPaymail: ourPaymail,
-      note: 'Payment sent with Ninja UI',
-      transactions: [tx],
-      derivationPrefix
-    }
-    const result = await atfinder.submitType42Payment(paymail, request, client)
-    console.log('final result', result)
   }
 
   return (
     <div>
       <Typography variant='h3'>Send</Typography>
-      <TextField
-        label='Paymail'
-        onChange={e => setPaymail(e.target.value)}
-      />
+      <Typography paragraph>
+        Ensure Babbage Desktop is open, or it will not work.
+      </Typography>
       <TextField
         label='Amount'
         onChange={e => setAmount(e.target.value)}
       />
-      <Button onClick={handleSend}>Send</Button>
+      <br />
+      <br />
+      <Button
+        disabled={loading}
+        onClick={handleSend}
+        variant='contained'
+        color='primary'
+      >
+        Send
+      </Button>
+      <br />
+      <br />
+      {loading && <LinearProgress />}
     </div>
   )
 }
 
-export default Sweep
+export default Send
