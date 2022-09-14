@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Checkbox, Button, Typography, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import boomerang from 'boomerang-http'
-import bsv from 'bsv'
+import bsv from 'babbage-bsv'
 import hashwrap from 'hash-wrap'
 
 const useStyles = makeStyles(

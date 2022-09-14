@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import atfinder from 'atfinder'
-import bsv from 'bsv'
+import bsv from 'babbage-bsv'
 import { getPaymentAddress } from 'sendover'
 import { isAuthenticated, createAction } from '@babbage/sdk'
 import { toast } from 'react-toastify'
