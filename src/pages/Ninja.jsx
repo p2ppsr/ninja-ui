@@ -22,7 +22,6 @@ import SettingsIcon from '@material-ui/icons/Settings'
 import CommandsIcon from '@material-ui/icons/Code'
 import TransactionsIcon from '@material-ui/icons/ListAlt'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
-import { toast } from 'react-toastify'
 
 const useStyles = makeStyles({
   content_wrap: {
@@ -55,6 +54,7 @@ const useStyles = makeStyles({
 }, { name: 'Ninja' })
 
 const Ninja = ({ history, location }) => {
+  const [ninjaLoading, setNinjaLoading] = useState(true)
   const [running, setRunning] = useState(false)
   const [currentBalance, setCurrentBalance] = useState(0)
   const classes = useStyles()
@@ -66,10 +66,10 @@ const Ninja = ({ history, location }) => {
       setCurrentBalance(runResult.total)
     } catch (e) {
       console.error(e)
-      toast.error(e.message)
-      setCurrentBalance('---')
+      setCurrentBalance('Error: ' + e.message)
     } finally {
       setRunning(false)
+      setNinjaLoading(false)
     }
   }
 
@@ -89,6 +89,10 @@ const Ninja = ({ history, location }) => {
 
   const numberWithCommas = x => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
+
+  if (ninjaLoading) {
+    return <div>loading...</div>
   }
 
   return (
