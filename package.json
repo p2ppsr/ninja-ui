@@ -16,7 +16,7 @@
     "react-router-dom": "^5.2.0",
     "react-toastify": "^8.0.2",
     "sendover": "^1.1.5",
-    "utxoninja": "^0.2.37"
+    "utxoninja": "^0.2.38"
   },
   "scripts": {
     "start": "webpack serve --mode development",
