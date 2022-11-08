@@ -110,13 +110,14 @@ const Sweep = () => {
         {utxos.map((x, i) => (
           <>
             <Checkbox
-              key={`${x.txid}.${x.vout}-cb`}
+              key={`${x.txid}.${x.vout}-cb-${i}-${x.selected}`}
               checked={x.selected}
               value={x.selected ? 'on' : 'off'}
               onChange={() => {
                 setUtxos(old => {
-                  old[i].selected = !old[i].selected
-                  return old
+                  const n = [...old]
+                  n[i].selected = !old[i].selected
+                  return n
                 })
               }}
             />

@@ -3,14 +3,15 @@ import {
   Button,
   Typography,
   LinearProgress,
-  TextField
+  TextField,
+  Divider
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import atfinder from 'atfinder'
 import bsv from 'babbage-bsv'
 import { getPaymentAddress } from 'sendover'
 import { isAuthenticated, createAction } from '@babbage/sdk'
 import { toast } from 'react-toastify'
+import Ninja from 'utxoninja'
 
 const useStyles = makeStyles(
   theme => ({
@@ -23,6 +24,14 @@ const Send = () => {
   const [amount, setAmount] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+
+  const [ninjaLoading, setNinjaLoading] = useState(false)
+  const [ninjaAmount, setNinjaAmount] = useState('')
+  const [ninjaPrivateKey, setNinjaPrivateKey] = useState('')
+  const [ninjaDojoURL, setNinjaDojoURL] = useState(
+    window.localStorage.server || ''
+  )
+  const [ninjaSuccess, setNinjaSuccess] = useState(false)
 
   const handleSend = async () => {
     try {
@@ -89,9 +98,90 @@ const Send = () => {
     }
   }
 
+  const handleNinjaSend = async () => {
+    try {
+      setNinjaLoading(true)
+      // Create a derivation prefix and suffix to derive the public key
+      const derivationPrefix = require('crypto')
+        .randomBytes(10)
+        .toString('base64')
+      const derivationSuffix = require('crypto')
+        .randomBytes(10)
+        .toString('base64')
+      // Derive the public key used for creating the output script
+      const derivedPublicKey = getPaymentAddress({
+        senderPrivateKey: window.localStorage.privateKey,
+        recipientPublicKey: bsv.PrivateKey.fromHex(ninjaPrivateKey)
+          .publicKey.toString(),
+        invoiceNumber: `2-3241645161d8-${derivationPrefix} ${derivationSuffix}`,
+        returnType: 'publicKey'
+      })
+
+      // Create an output script that can only be unlocked with the corresponding derived private key
+      const script = new bsv.Script(
+        bsv.Script.fromAddress(bsv.Address.fromPublicKey(
+          bsv.PublicKey.fromString(derivedPublicKey)
+        ))
+      ).toHex()
+      // Create a new output to spend
+      const outputs = [{
+        script,
+        satoshis: ninjaAmount
+      }]
+
+      // Build a transaction for the foreign Nija
+      const transaction = await window.Ninja.getTransactionWithOutputs({
+        outputs,
+        note: 'Outgoing payment from the Ninja UI to foreign Ninja'
+      })
+
+      transaction.outputs = [{
+        vout: 0,
+        satoshis: ninjaAmount,
+        derivationSuffix
+      }]
+
+      // Create a foreign Ninja for processing the new payment
+      const foreignNinja = new Ninja({
+        privateKey: ninjaPrivateKey,
+        config: {
+          dojoURL: ninjaDojoURL
+        }
+      })
+
+      console.log(JSON.stringify(transaction, null, 2))
+
+      const directTransaction = {
+        derivationPrefix,
+        transaction,
+        senderIdentityKey: bsv.PrivateKey.fromString(localStorage.privateKey)
+          .publicKey.toString(),
+        protocol: '3241645161d8',
+        note: 'Incoming payment from Ninja UI'
+      }
+
+      console.log(JSON.stringify(directTransaction, null, 2))
+
+      // Process the incoming transaction
+      await foreignNinja.submitDirectTransaction(directTransaction)
+
+      setNinjaSuccess(true)
+      toast.success('Payment sent! Recipient Ninja has processed transaction.')
+    } catch (e) {
+      toast.error(e.message)
+      console.error(e)
+    } finally {
+      setNinjaLoading(false)
+    }
+  }
+
   return (
     <div>
       <Typography variant='h3' paragraph>Send</Typography>
+      <Divider />
+      <br />
+      <br />
+      <Typography variant='h5' paragraph>Babbage Desktop</Typography>
       {!success ? (
         <>
           <Typography paragraph>
@@ -100,6 +190,7 @@ const Send = () => {
           <TextField
             label='Amount (satoshis)'
             type='number'
+            value={amount}
             onChange={e => setAmount(e.target.value)}
           />
           <br />
@@ -110,7 +201,7 @@ const Send = () => {
             variant='contained'
             color='primary'
           >
-            Send
+            Send to Babbage
           </Button>
           <br />
           <br />
@@ -123,7 +214,65 @@ const Send = () => {
           <Button
             onClick={() => {
               setSuccess(false)
-              setAmont('')
+              setAmount('')
+            }}
+            variant='contained'
+          >
+            Done
+          </Button>
+        </>
+      )}
+      <Divider />
+      <br />
+      <br />
+      <Typography variant='h5' paragraph>Another Ninja</Typography>
+      {!ninjaSuccess ? (
+        <>
+          <Typography paragraph>
+            Enter the other Ninja's private key and Dojo URL. Then enter the amount to send.
+          </Typography>
+          <TextField
+            label='Amount (satoshis)'
+            type='number'
+            value={ninjaAmount}
+            onChange={e => setNinjaAmount(parseInt(e.target.value))}
+          />
+          <br />
+          <br />
+          <TextField
+            label='Private Key (hex)'
+            value={ninjaPrivateKey}
+            onChange={e => setNinjaPrivateKey(e.target.value)}
+          />
+          <br />
+          <br />
+          <TextField
+            label='External Dojo URL'
+            value={ninjaDojoURL}
+            onChange={e => setNinjaDojoURL(e.target.value)}
+          />
+          <br />
+          <br />
+          <Button
+            disabled={ninjaLoading}
+            onClick={handleNinjaSend}
+            variant='contained'
+            color='primary'
+          >
+            Send to Ninja
+          </Button>
+          <br />
+          <br />
+          {ninjaLoading && <LinearProgress />}
+        </>) : (
+        <>
+          <Typography paragraph>
+            You sent <b>{ninjaAmount} satoshis</b> to an external Ninja! The money has been received and processed by the recipient.
+          </Typography>
+          <Button
+            onClick={() => {
+              setNinjaSuccess(false)
+              setNinjaAmont('')
             }}
             variant='contained'
           >
