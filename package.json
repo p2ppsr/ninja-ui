@@ -7,7 +7,7 @@
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "atfinder": "^1.1.1",
-    "babbage-bsv": "^0.1.0",
+    "babbage-bsv": "^0.1.1",
     "boomerang-http": "^0.1.0",
     "hash-wrap": "^1.0.6",
     "react": "^17.0.2",
