@@ -28,21 +28,11 @@ const useStyles = makeStyles({
     margin: 'auto',
     maxWidth: '1440px',
     padding: '1em',
-    boxSizing: 'border-box',
-    display: 'grid',
-    gridTemplateColumns: 'auto 1fr',
-    gridGap: '2em',
-    '& > :first-child': {
-      minWidth: '15em'
-    }
-  },
-  logo_list_grid: {
-    display: 'grid',
-    gridTemplateRows: 'auto 1fr auto'
+    boxSizing: 'border-box'
   },
   img: {
-    width: '13em',
-    margin: '1em auto',
+    width: '8em',
+    margin: '0.5em auto',
     justifySelf: 'center'
   },
   list_item: {
@@ -99,7 +89,7 @@ const Ninja = ({ history, location }) => {
     <div className={classes.content_wrap}>
       <div className={classes.logo_list_grid}>
         <img src='/banner.png' className={classes.img} alt='' />
-        <List>
+        <List component={Stack} direction='row'>
           <ListItem>
             <Typography>
               Current Balance:{' '}

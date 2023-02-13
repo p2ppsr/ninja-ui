@@ -80,12 +80,15 @@ const Welcome = ({ history }) => {
         Create a new private key by clicking the dice or enter an existing
         private key.
       </Typography>
+      <Typography paragraph>
+        This is a management interface for the Dojo and Ninja system. <a href='https://projectbabbage.com/docs/dojo' target='_blank'>Read the docs.</a>
+      </Typography>
       <div className={classes.field_rand_grid}>
         <IconButton onClick={handleNewKeyClick}>
           <Casino color='primary' />
         </IconButton>
         <TextField
-          placeholder='Enter private Key (hex)...'
+          label='Ninja private Key (hex)'
           fullWidth
           value={privateKey}
           onChange={e => setPrivateKey(e.target.value)}
@@ -93,14 +96,22 @@ const Welcome = ({ history }) => {
         />
       </div>
       <TextField
-        placeholder='Dojo Server'
+        label='Dojo Server URL'
         fullWidth
         value={server}
         onChange={e => setServer(e.target.value)}
         variant='outlined'
       />
+    <div style={{ textAlign: 'left' }}>
       <br />
       <br />
+      <ul>
+        <li><Typography>Babbage runs <b>https://dojo.babbage.systems</b> for mainnet</Typography></li>
+        <li><Typography>Babbage runs <b>https://staging-dojo.babbage.systems</b> for testnet</Typography></li>
+      </ul>
+      <br />
+      <br />
+    </div>
       <Typography paragraph>Save your key before you use it!</Typography>
       <Button
         variant='contained'
@@ -109,8 +120,13 @@ const Welcome = ({ history }) => {
         onClick={handleLogInClick}
         disabled={isKeyInvalid(privateKey)}
       >
-        Saved, continue
+        Key Saved, continue
       </Button>
+      <br />
+      <br />
+      <Typography paragraph>
+        This website is open-source, and your private key never leaves your browser. <a href='https://github.com/p2ppsr/ninja-ui' target='_blank'>Run it yourself!</a>
+      </Typography>
     </center>
   )
 }
