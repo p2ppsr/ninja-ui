@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import utxoninja from 'utxoninja'
-import { makeStyles } from '@material-ui/core/styles'
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Button,
   ListItem,
@@ -12,8 +12,8 @@ import {
   DialogActions,
   TextField,
   Divider
-} from '@material-ui/core'
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
+} from '@mui/material'
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 

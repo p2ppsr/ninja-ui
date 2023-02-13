@@ -5,8 +5,8 @@ import {
   LinearProgress,
   TextField,
   Divider
-} from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles';
 import bsv from 'babbage-bsv'
 import { getPaymentAddress } from 'sendover'
 import { isAuthenticated, createAction } from '@babbage/sdk'
@@ -181,16 +181,17 @@ const Send = () => {
       <Divider />
       <br />
       <br />
-      <Typography variant='h5' paragraph>Babbage Desktop</Typography>
+      <Typography variant='h5' paragraph>MetaNet Client</Typography>
       {!success ? (
         <>
           <Typography paragraph>
-            Ensure Babbage Desktop is open, or it will not work.
+            Ensure a MetaNet Client is open, or it will not work.
           </Typography>
           <TextField
             label='Amount (satoshis)'
             type='number'
             value={amount}
+            fullWidth
             onChange={e => setAmount(e.target.value)}
           />
           <br />
@@ -201,7 +202,7 @@ const Send = () => {
             variant='contained'
             color='primary'
           >
-            Send to Babbage
+            Send to Client
           </Button>
           <br />
           <br />
@@ -234,14 +235,16 @@ const Send = () => {
           <TextField
             label='Amount (satoshis)'
             type='number'
+            fullWidth
             value={ninjaAmount}
             onChange={e => setNinjaAmount(parseInt(e.target.value))}
           />
           <br />
           <br />
           <TextField
-            label='Private Key (hex)'
+            label='External Ninja Private Key (hex)'
             value={ninjaPrivateKey}
+            fullWidth
             onChange={e => setNinjaPrivateKey(e.target.value)}
           />
           <br />
@@ -249,6 +252,7 @@ const Send = () => {
           <TextField
             label='External Dojo URL'
             value={ninjaDojoURL}
+            fullWidth
             onChange={e => setNinjaDojoURL(e.target.value)}
           />
           <br />

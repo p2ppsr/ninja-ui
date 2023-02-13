@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { TextField, Button, Typography, IconButton } from '@material-ui/core'
-import Casino from '@material-ui/icons/Casino'
-import { makeStyles } from '@material-ui/core/styles'
+import { TextField, Button, Typography, IconButton } from '@mui/material'
+import Casino from '@mui/icons-material/Casino'
+import makeStyles from '@mui/styles/makeStyles';
 import isKeyInvalid from '../utils/isKeyInvalid'
 import Ninja from 'utxoninja'
 import { toast } from 'react-toastify'
@@ -84,7 +84,7 @@ const Welcome = ({ history }) => {
         This is a management interface for the Dojo and Ninja system. <a href='https://projectbabbage.com/docs/dojo' target='_blank'>Read the docs.</a>
       </Typography>
       <div className={classes.field_rand_grid}>
-        <IconButton onClick={handleNewKeyClick}>
+        <IconButton onClick={handleNewKeyClick} size="large">
           <Casino color='primary' />
         </IconButton>
         <TextField
@@ -116,7 +116,7 @@ const Welcome = ({ history }) => {
       <Button
         variant='contained'
         size='large'
-        color='primary'
+        color='secondary'
         onClick={handleLogInClick}
         disabled={isKeyInvalid(privateKey)}
       >
@@ -128,7 +128,7 @@ const Welcome = ({ history }) => {
         This website is open-source, and your private key never leaves your browser. <a href='https://github.com/p2ppsr/ninja-ui' target='_blank'>Run it yourself!</a>
       </Typography>
     </center>
-  )
+  );
 }
 
 export default Welcome

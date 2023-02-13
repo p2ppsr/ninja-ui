@@ -1,47 +1,70 @@
 import React, { useEffect, useState } from 'react'
 import UTXONinja from 'utxoninja'
 import {
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Typography,
+  Button,
   CircularProgress
-} from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import RefreshIcon from '@material-ui/icons/Refresh'
-import { Switch, Route, Redirect } from 'react-router-dom'
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles';
+import RefreshIcon from '@mui/icons-material/Refresh'
+import { Switch, Route, Redirect, Link } from 'react-router-dom'
 import Transactions from './Transactions'
 import Sweep from './Sweep'
 import Send from './Send'
 import Commands from './Commands'
 import Settings from './Settings'
-import Profile from './Profile'
 import isKeyInvalid from '../utils/isKeyInvalid'
-import SettingsIcon from '@material-ui/icons/Settings'
-import CommandsIcon from '@material-ui/icons/Code'
-import TransactionsIcon from '@material-ui/icons/ListAlt'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
+import SettingsIcon from '@mui/icons-material/Settings'
+import CommandsIcon from '@mui/icons-material/Code'
+import TransactionsIcon from '@mui/icons-material/ListAlt'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
-const useStyles = makeStyles({
-  content_wrap: {
-    margin: 'auto',
+const useStyles = makeStyles(theme => ({
+  child_wrap: theme.templates.page_wrap,
+  logo_list_grid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr auto auto auto auto auto auto auto',
+    gridGap: '0.75em',
+    alignItems: 'center',
+    margin: '1em auto',
     maxWidth: '1440px',
-    padding: '1em',
-    boxSizing: 'border-box'
+    padding: '0px 1em',
+    boxSizing: 'border-box',
+    [theme.breakpoints.down('lg')]: {
+      gridTemplateColumns: '1fr'
+    }
   },
   img: {
     width: '8em',
-    margin: '0.5em auto',
-    justifySelf: 'center'
+    position: 'relative',
+    top: '-8px'
   },
   list_item: {
     borderRadius: '2em'
   },
   refreshIcon: {
-    cursor: 'pointer'
+    position: 'relative',
+    top: '16px',
+    cursor: 'pointer',
+    width: '40px',
+    height: '40px',
+    color: theme.palette.secondary.main,
+    border: `1px solid ${theme.palette.primary.main}`,
+    borderRadius: '2em',
+    boxSizing: 'border-box',
+    transition: 'all 0.3s',
+    '&:hover': {
+      color: theme.palette.secondary.dark,
+      boxShadow: '2px 2px 3px 1px rgba(0,0,0,0.5)',
+      transform: 'scale(1.1)'
+    }
+  },
+  balance_display: {
+    position: 'relative',
+    top: '-8px',
+    whiteSpace: 'nowrap !important'
   }
-}, { name: 'Ninja' })
+}), { name: 'Ninja' })
 
 const Ninja = ({ history, location }) => {
   const [ninjaLoading, setNinjaLoading] = useState(true)
@@ -78,7 +101,7 @@ const Ninja = ({ history, location }) => {
   }, [])
 
   const numberWithCommas = x => {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   if (ninjaLoading) {
@@ -89,13 +112,80 @@ const Ninja = ({ history, location }) => {
     <div className={classes.content_wrap}>
       <div className={classes.logo_list_grid}>
         <img src='/banner.png' className={classes.img} alt='' />
-        <List component={Stack} direction='row'>
-          <ListItem>
-            <Typography>
-              Current Balance:{' '}
-              <b>{numberWithCommas(currentBalance)} Satoshis</b>
-            </Typography>
-            {!running
+          <Button
+            variant={location.pathname === '/ninja/transactions' ? 'outlined' : undefined}
+            className={classes.list_item}
+            onClick={() => history.push('/ninja/transactions')}
+          >
+              <TransactionsIcon
+                color={
+                  location.pathname === '/ninja/transactions'
+                    ? 'secondary'
+                    : undefined
+                }
+              />
+            Transactions
+          </Button>
+          <Button
+            variant={location.pathname === '/ninja/sweep' ? 'outlined' : undefined}
+            className={classes.list_item}
+            onClick={() => history.push('/ninja/sweep')}
+          >
+              <TransactionsIcon
+                color={
+                  location.pathname === '/ninja/sweep'
+                    ? 'secondary'
+                    : undefined
+                }
+              />
+            Sweep
+          </Button>
+          <Button
+            variant={location.pathname === '/ninja/send' ? 'outlined' : undefined}
+            className={classes.list_item}
+            onClick={() => history.push('/ninja/send')}
+          >
+              <TransactionsIcon
+                color={
+                  location.pathname === '/ninja/send'
+                    ? 'secondary'
+                    : undefined
+                }
+              />
+            Send
+          </Button>
+          <Button
+            variant={location.pathname === '/ninja/commands' ? 'outlined' : undefined}
+            className={classes.list_item}
+            onClick={() => history.push('/ninja/commands')}
+          >
+              <CommandsIcon
+                color={
+                  location.pathname === '/ninja/commands'
+                    ? 'secondary'
+                    : undefined
+                }
+              />
+            Commands
+          </Button>
+
+          <Button
+            variant={location.pathname === '/ninja/settings' ? 'outlined' : undefined}
+            className={classes.list_item}
+            onClick={() => history.push('/ninja/settings')}
+          >
+              <SettingsIcon
+                color={
+                  location.pathname === '/ninja/settings'
+                    ? 'secondary'
+                    : undefined
+                }
+              />
+            Settings
+        </Button>
+            <Typography className={classes.balance_display}>
+              Balance:{' '}
+              <b>{numberWithCommas(currentBalance)} sats</b> {!running
               ? (
                 <RefreshIcon
               onClick={getTotalValueRefreshClick}
@@ -108,122 +198,33 @@ const Ninja = ({ history, location }) => {
             />
               )
             }
-          </ListItem>
-          <ListItem
-            button
-            selected={location.pathname === '/ninja/transactions'}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/transactions')}
-          >
-            <ListItemIcon>
-              <TransactionsIcon
-                color={
-                  location.pathname === '/ninja/transactions'
-                    ? 'primary'
-                    : undefined
-                }
-              />
-            </ListItemIcon>
-            <ListItemText>Transactions</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            selected={location.pathname === '/ninja/sweep'}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/sweep')}
-          >
-            <ListItemIcon>
-              <TransactionsIcon
-                color={
-                  location.pathname === '/ninja/sweep'
-                    ? 'primary'
-                    : undefined
-                }
-              />
-            </ListItemIcon>
-            <ListItemText>Sweep</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            selected={location.pathname === '/ninja/send'}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/send')}
-          >
-            <ListItemIcon>
-              <TransactionsIcon
-                color={
-                  location.pathname === '/ninja/send'
-                    ? 'primary'
-                    : undefined
-                }
-              />
-            </ListItemIcon>
-            <ListItemText>Send</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            selected={location.pathname === '/ninja/commands'}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/commands')}
-          >
-            <ListItemIcon>
-              <CommandsIcon
-                color={
-                  location.pathname === '/ninja/commands'
-                    ? 'primary'
-                    : undefined
-                }
-              />
-            </ListItemIcon>
-            <ListItemText>Commands</ListItemText>
-          </ListItem>
-
-          <ListItem
-            button
-            selected={location.pathname === '/ninja/profile'}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/profile')}
-          >
-            <ListItemIcon>
-              <AccountCircleIcon
-                color={
-                  location.pathname === '/ninja/profile' ? 'primary' : undefined
-                }
-              />
-            </ListItemIcon>
-            <ListItemText>Profile</ListItemText>
-          </ListItem>
-
-          <ListItem
-            button
-            selected={location.pathname === '/ninja/settings'}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/settings')}
-          >
-            <ListItemIcon>
-              <SettingsIcon
-                color={
-                  location.pathname === '/ninja/settings'
-                    ? 'primary'
-                    : undefined
-                }
-              />
-            </ListItemIcon>
-            <ListItemText>Settings</ListItemText>
-          </ListItem>
-        </List>
-        <Typography color='textSecondary' align='center'>
-          You are a ninja
-        </Typography>
+            </Typography>
       </div>
-      <Switch>
-        <Route exact path='/ninja/transactions' component={Transactions} />
-        <Route exact path='/ninja/sweep' component={Sweep} />
-        <Route exact path='/ninja/send' component={Send} />
-        <Route exact path='/ninja/commands' component={Commands} />
-        <Route exact path='/ninja/profile' component={Profile} />
-        <Route exact path='/ninja/settings' component={Settings} />
-      </Switch>
+      <div className={classes.child_wrap}>
+        <Switch>
+          <Route exact path='/ninja/transactions' component={Transactions} />
+          <Route exact path='/ninja/sweep' component={Sweep} />
+          <Route exact path='/ninja/send' component={Send} />
+          <Route exact path='/ninja/commands' component={Commands} />
+          <Route exact path='/ninja/settings' component={Settings} />
+          <Route
+            default component={() => (
+              <center style={{ marginTop: '2em' }}>
+                <Typography align='center' variant='h4' paragraph>
+                  Page Not Found
+                </Typography>
+                <Typography>
+                  <Link to='/ninja/transactions'>Recent Transactions</Link>
+                </Typography>
+              </center>
+            )}
+          />
+        </Switch>
+      </div>
+      <center>© P2PPSR — <a href='https://github.com/p2ppsr/ninja-ui' target='_blank'>GitHub</a></center>
+      <br />
+      <br />
+      <center style={{ userSelect: 'none' }}><i>you are a ninja!</i></center>
     </div>
   )
 }

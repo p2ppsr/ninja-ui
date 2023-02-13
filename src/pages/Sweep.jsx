@@ -1,17 +1,67 @@
 import React, { useState } from 'react'
-import { Checkbox, Button, Typography, TextField } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
+import { Checkbox, Button, Typography, TextField } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles';
 import boomerang from 'boomerang-http'
 import bsv from 'babbage-bsv'
 import hashwrap from 'hash-wrap'
+import { toast } from 'react-toastify'
+import SendIcon from '@mui/icons-material/Send'
 
 const useStyles = makeStyles(
   theme => ({
-    utxos_grid: {
-      display: 'grid',
-      gridTemplateColumns: 'auto 1fr auto auto',
-      gridGap: theme.spacing(2)
+    content_wrap: {
+    maxWidth: '1440px',
+    margin: 'auto',
+    marginTop: '3em',
+    boxSizing: 'border-box',
+    padding: '2em',
+    [theme.breakpoints.down('sm')]: {
+      marginTop: '0.5em',
+      padding: '0.5em'
     }
+  },
+  title_text: {
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '2em'
+    },
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '1.6em'
+    }
+  },
+  card_link: {
+    textDecoration: 'none !important'
+  },
+  card_container: {
+    margin: '1.5em auto'
+  },
+  card_grid: {
+    display: 'grid',
+    gridTemplateColumns: '4em 1fr',
+    alignItems: 'center',
+    [theme.breakpoints.down('md')]: {
+      gridTemplateColumns: '3em 1fr'
+    },
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '2.5em 1fr'
+    }
+  },
+  link_text: {
+    textAlign: 'left'
+  },
+  utxos_grid: {
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr auto auto',
+    gridGap: theme.spacing(2)
+  },
+  spv_data_display: {
+    overflow: 'scroll',
+    width: '100%',
+    maxHeight: '40vh',
+    userSelect: 'all',
+    boxSizing: 'border-box',
+    border: '1px solid #999',
+    padding: '0.5em'
+  }
   }),
   { name: 'Sweep' }
 )
@@ -21,26 +71,37 @@ const Sweep = () => {
   const [utxos, setUtxos] = useState([])
   const [key, setKey] = useState('')
   const [network, setNetwork] = useState('mainnet')
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
   const handleGetUtxos = async () => {
-    const add = bsv.Address.fromPrivateKey(bsv.PrivateKey.fromWIF(key))
-    const addr = add.toString()
-    const network = add.network.name
-    setNetwork(network)
-    const wocNet = network === 'testnet' ? 'test' : 'main'
-    const got = await boomerang(
-      'GET',
-      `https://api.whatsonchain.com/v1/bsv/${wocNet}/address/${addr}/unspent`
-    )
-    setUtxos(got.map(x => ({
-      txid: x.tx_hash,
-      vout: x.tx_pos,
-      satoshis: x.value,
-      selected: true
-    })))
+    try {
+      setLoading(true)
+      const add = bsv.Address.fromPrivateKey(bsv.PrivateKey.fromWIF(key))
+      const addr = add.toString()
+      const network = add.network.name
+      setNetwork(network)
+      const wocNet = network === 'testnet' ? 'test' : 'main'
+      const got = await boomerang(
+        'GET',
+        `https://api.whatsonchain.com/v1/bsv/${wocNet}/address/${addr}/unspent`
+      )
+      setUtxos(got.map(x => ({
+        txid: x.tx_hash,
+        vout: x.tx_pos,
+        satoshis: x.value,
+        selected: true
+      })))
+    } catch (e) {
+      toast.error(e.message)
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleSweep = async () => {
+    try {
     const selectedUtxos = utxos.filter(x => x.selected)
     console.log('selected', selectedUtxos)
     const inputs = {}
@@ -91,53 +152,87 @@ const Sweep = () => {
     const result = await window.Ninja.getTransactionWithOutputs({
       inputs
     })
-    console.log(result)
+      console.log(result)
+      setSuccess(true)
+    } catch (e) {
+      toast.error(e.message)
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div>
-      <Typography variant='h3'>Sweep</Typography>
-      <TextField
-        label='WIF key'
-        onChange={e => setKey(e.target.value)}
-      />
-      <Button onClick={handleGetUtxos}>Get UTXOs</Button>
-      <div className={classes.utxos_grid}>
-        <Typography><b>Sweep?</b></Typography>
-        <Typography><b>txid</b></Typography>
-        <Typography><b>vout</b></Typography>
-        <Typography><b>amount</b></Typography>
-        {utxos.map((x, i) => (
+      <Typography variant='h3' paragraph>Sweep</Typography>
+      <br />
+      <br />
+      {!success
+        ? (
           <>
-            <Checkbox
-              key={`${x.txid}.${x.vout}-cb-${i}-${x.selected}`}
-              checked={x.selected}
-              value={x.selected ? 'on' : 'off'}
-              onChange={() => {
-                setUtxos(old => {
-                  const n = [...old]
-                  n[i].selected = !old[i].selected
-                  return n
-                })
-              }}
+            <TextField
+              fullWidth
+              label='WIF key'
+              onChange={e => setKey(e.target.value)}
             />
-            <Typography key={`${x.txid}.${x.vout}-t1`}>{x.txid}</Typography>
-            <Typography key={`${x.txid}.${x.vout}-t2`}>{x.vout}</Typography>
-            <Typography key={`${x.txid}.${x.vout}-t3`}>{x.satoshis / 100000000}</Typography>
+            <br />
+            <br />
+            <Button variant='contained' onClick={handleGetUtxos} disabled={loading}>Get UTXOs</Button>
+            <br />
+            <br />
+            <div className={classes.utxos_grid}>
+              <Typography><b>Sweep?</b></Typography>
+              <Typography><b>txid</b></Typography>
+              <Typography><b>vout</b></Typography>
+              <Typography><b>amount</b></Typography>
+              {utxos.map((x, i) => (
+                <React.Fragment key={i}>
+                  <Checkbox
+                    checked={x.selected}
+                    onChange={() => {
+                      setUtxos(old => {
+                        const n = [...old]
+                        n[i].selected = !old[i].selected
+                        return n
+                      })
+                    }}
+                  />
+                  <Typography>{x.txid}</Typography>
+                  <Typography>{x.vout}</Typography>
+                  <Typography>{x.satoshis / 100000000} BSV</Typography>
+                </React.Fragment>
+              ))}
+            </div>
+            <br />
+            <br />
+            <Button
+              disabled={utxos.length < 1 || utxos.every(x => x.selected === false) || loading} onClick={handleSweep}
+              variant='contained'
+              color='primary'
+              startIcon={<SendIcon />}
+            >
+              Sweep into Ninja
+            </Button>
+            <br />
+            <br />
+            {loading && <LinearProgress />}
           </>
-        ))}
-      </div>
-      <Button disabled={utxos.length < 1} onClick={handleSweep}>Sweep</Button>
-      <Button
-        onClick={async () => {
-          const result = await window.Ninja.getTransactionWithOutputs({
-            outputs: [{ script: '006a', satoshis: 0 }]
-          })
-          console.log(result)
-        }}
-      >
-        test
-      </Button>
+          )
+        : (
+          <>
+            <Typography paragraph>
+              The coins have been successfully imported!
+            </Typography>
+            <Button
+              variant='contained' onClick={() => {
+                setSuccess(false)
+                setUtxos([])
+              }}
+            >
+              Done
+            </Button>
+          </>
+          )}
     </div>
   )
 }

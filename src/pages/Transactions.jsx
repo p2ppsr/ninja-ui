@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import Accordion from '@material-ui/core/Accordion'
-import AccordionDetails from '@material-ui/core/AccordionDetails'
-import AccordionSummary from '@material-ui/core/AccordionSummary'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { Typography } from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles';
+import Accordion from '@mui/material/Accordion'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 const useStyles = makeStyles(
   theme => ({
@@ -83,11 +83,13 @@ const Transactions = () => {
   const classes = useStyles()
   const [tx, setTx] = useState([])
   const [expanded, setExpanded] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     (async () => {
       const result = await window.Ninja.getTransactions()
       setTx(result.transactions)
+      setLoading(false)
     })()
   }, [])
 
@@ -147,6 +149,16 @@ const Transactions = () => {
           </div>
         ))}
       </div>
+      {!loading && tx.length === 0 && (
+        <center style={{ marginTop: '2em' }}>
+                <Typography align='center' variant='h4' paragraph>
+                  No Transactions
+                </Typography>
+                <Typography>
+                  There are no transactions in this Ninja to display yet.
+                </Typography>
+              </center>
+      )}
     </div>
   )
 }
