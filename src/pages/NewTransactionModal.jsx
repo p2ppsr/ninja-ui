@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import utxoninja from 'utxoninja'
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from '@mui/styles/makeStyles'
 import {
   Button,
   ListItem,

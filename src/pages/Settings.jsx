@@ -6,7 +6,7 @@ const Settings = ({ history }) => {
 
   const handleForgetKeyClick = () => {
     window.Ninja = undefined
-    localStorage.clear()
+    window.localStorage.clear()
     history.push('/')
   }
 

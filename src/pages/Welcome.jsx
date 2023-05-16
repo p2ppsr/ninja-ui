@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { TextField, Button, Typography, IconButton } from '@mui/material'
 import Casino from '@mui/icons-material/Casino'
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from '@mui/styles/makeStyles'
 import isKeyInvalid from '../utils/isKeyInvalid'
 import Ninja from 'utxoninja'
 import { toast } from 'react-toastify'
@@ -81,10 +81,10 @@ const Welcome = ({ history }) => {
         private key.
       </Typography>
       <Typography paragraph>
-        This is a management interface for the Dojo and Ninja system. <a href='https://projectbabbage.com/docs/dojo' target='_blank'>Read the docs.</a>
+        This is a management interface for the Dojo and Ninja system. <a href='https://projectbabbage.com/docs/dojo' target='_blank' rel='noreferrer'>Read the docs.</a>
       </Typography>
       <div className={classes.field_rand_grid}>
-        <IconButton onClick={handleNewKeyClick} size="large">
+        <IconButton onClick={handleNewKeyClick} size='large'>
           <Casino color='primary' />
         </IconButton>
         <TextField
@@ -102,16 +102,16 @@ const Welcome = ({ history }) => {
         onChange={e => setServer(e.target.value)}
         variant='outlined'
       />
-    <div style={{ textAlign: 'left' }}>
-      <br />
-      <br />
-      <ul>
-        <li><Typography>Babbage runs <b>https://dojo.babbage.systems</b> for mainnet</Typography></li>
-        <li><Typography>Babbage runs <b>https://staging-dojo.babbage.systems</b> for testnet</Typography></li>
-      </ul>
-      <br />
-      <br />
-    </div>
+      <div style={{ textAlign: 'left' }}>
+        <br />
+        <br />
+        <ul>
+          <li><Typography>Babbage runs <b>https://dojo.babbage.systems</b> for mainnet</Typography></li>
+          <li><Typography>Babbage runs <b>https://staging-dojo.babbage.systems</b> for testnet</Typography></li>
+        </ul>
+        <br />
+        <br />
+      </div>
       <Typography paragraph>Save your key before you use it!</Typography>
       <Button
         variant='contained'
@@ -125,10 +125,10 @@ const Welcome = ({ history }) => {
       <br />
       <br />
       <Typography paragraph>
-        This website is open-source, and your private key never leaves your browser. <a href='https://github.com/p2ppsr/ninja-ui' target='_blank'>Run it yourself!</a>
+        This website is open-source, and your private key never leaves your browser. <a href='https://github.com/p2ppsr/ninja-ui' target='_blank' rel='noreferrer'>Run it yourself!</a>
       </Typography>
     </center>
-  );
+  )
 }
 
 export default Welcome

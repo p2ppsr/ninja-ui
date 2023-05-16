@@ -5,9 +5,9 @@ import {
   Button,
   CircularProgress
 } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from '@mui/styles/makeStyles'
 import RefreshIcon from '@mui/icons-material/Refresh'
-import { Switch, Route, Redirect, Link } from 'react-router-dom'
+import { Switch, Route, Link } from 'react-router-dom'
 import Transactions from './Transactions'
 import Sweep from './Sweep'
 import Send from './Send'
@@ -17,7 +17,6 @@ import isKeyInvalid from '../utils/isKeyInvalid'
 import SettingsIcon from '@mui/icons-material/Settings'
 import CommandsIcon from '@mui/icons-material/Code'
 import TransactionsIcon from '@mui/icons-material/ListAlt'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 
 const useStyles = makeStyles(theme => ({
   child_wrap: theme.templates.page_wrap,
@@ -101,7 +100,7 @@ const Ninja = ({ history, location }) => {
   }, [])
 
   const numberWithCommas = x => {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   }
 
   if (ninjaLoading) {
@@ -112,93 +111,92 @@ const Ninja = ({ history, location }) => {
     <div className={classes.content_wrap}>
       <div className={classes.logo_list_grid}>
         <img src='/banner.png' className={classes.img} alt='' />
-          <Button
-            variant={location.pathname === '/ninja/transactions' ? 'outlined' : undefined}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/transactions')}
-          >
-              <TransactionsIcon
-                color={
+        <Button
+          variant={location.pathname === '/ninja/transactions' ? 'outlined' : undefined}
+          className={classes.list_item}
+          onClick={() => history.push('/ninja/transactions')}
+        >
+          <TransactionsIcon
+            color={
                   location.pathname === '/ninja/transactions'
                     ? 'secondary'
                     : undefined
                 }
-              />
-            Transactions
-          </Button>
-          <Button
-            variant={location.pathname === '/ninja/sweep' ? 'outlined' : undefined}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/sweep')}
-          >
-              <TransactionsIcon
-                color={
+          />
+          Transactions
+        </Button>
+        <Button
+          variant={location.pathname === '/ninja/sweep' ? 'outlined' : undefined}
+          className={classes.list_item}
+          onClick={() => history.push('/ninja/sweep')}
+        >
+          <TransactionsIcon
+            color={
                   location.pathname === '/ninja/sweep'
                     ? 'secondary'
                     : undefined
                 }
-              />
-            Sweep
-          </Button>
-          <Button
-            variant={location.pathname === '/ninja/send' ? 'outlined' : undefined}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/send')}
-          >
-              <TransactionsIcon
-                color={
+          />
+          Sweep
+        </Button>
+        <Button
+          variant={location.pathname === '/ninja/send' ? 'outlined' : undefined}
+          className={classes.list_item}
+          onClick={() => history.push('/ninja/send')}
+        >
+          <TransactionsIcon
+            color={
                   location.pathname === '/ninja/send'
                     ? 'secondary'
                     : undefined
                 }
-              />
-            Send
-          </Button>
-          <Button
-            variant={location.pathname === '/ninja/commands' ? 'outlined' : undefined}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/commands')}
-          >
-              <CommandsIcon
-                color={
+          />
+          Send
+        </Button>
+        <Button
+          variant={location.pathname === '/ninja/commands' ? 'outlined' : undefined}
+          className={classes.list_item}
+          onClick={() => history.push('/ninja/commands')}
+        >
+          <CommandsIcon
+            color={
                   location.pathname === '/ninja/commands'
                     ? 'secondary'
                     : undefined
                 }
-              />
-            Commands
-          </Button>
+          />
+          Commands
+        </Button>
 
-          <Button
-            variant={location.pathname === '/ninja/settings' ? 'outlined' : undefined}
-            className={classes.list_item}
-            onClick={() => history.push('/ninja/settings')}
-          >
-              <SettingsIcon
-                color={
+        <Button
+          variant={location.pathname === '/ninja/settings' ? 'outlined' : undefined}
+          className={classes.list_item}
+          onClick={() => history.push('/ninja/settings')}
+        >
+          <SettingsIcon
+            color={
                   location.pathname === '/ninja/settings'
                     ? 'secondary'
                     : undefined
                 }
-              />
-            Settings
+          />
+          Settings
         </Button>
-            <Typography className={classes.balance_display}>
-              Balance:{' '}
-              <b>{numberWithCommas(currentBalance)} sats</b> {!running
-              ? (
-                <RefreshIcon
-              onClick={getTotalValueRefreshClick}
-              className={classes.refreshIcon}
-            />
+        <Typography className={classes.balance_display}>
+          Balance:{' '}
+          <b>{numberWithCommas(currentBalance)} sats</b> {!running
+            ? (
+              <RefreshIcon
+                onClick={getTotalValueRefreshClick}
+                className={classes.refreshIcon}
+              />
               )
-                : (
-                  <CircularProgress
-              className={classes.refreshIcon}
-            />
-              )
-            }
-            </Typography>
+            : (
+              <CircularProgress
+                className={classes.refreshIcon}
+              />
+              )}
+        </Typography>
       </div>
       <div className={classes.child_wrap}>
         <Switch>
@@ -221,7 +219,7 @@ const Ninja = ({ history, location }) => {
           />
         </Switch>
       </div>
-      <center>© P2PPSR — <a href='https://github.com/p2ppsr/ninja-ui' target='_blank'>GitHub</a></center>
+      <center>© P2PPSR — <a href='https://github.com/p2ppsr/ninja-ui' target='_blank' rel='noreferrer'>GitHub</a></center>
       <br />
       <br />
       <center style={{ userSelect: 'none' }}><i>you are a ninja!</i></center>

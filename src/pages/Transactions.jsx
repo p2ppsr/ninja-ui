@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Typography } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from '@mui/styles/makeStyles'
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
@@ -151,13 +151,13 @@ const Transactions = () => {
       </div>
       {!loading && tx.length === 0 && (
         <center style={{ marginTop: '2em' }}>
-                <Typography align='center' variant='h4' paragraph>
-                  No Transactions
-                </Typography>
-                <Typography>
-                  There are no transactions in this Ninja to display yet.
-                </Typography>
-              </center>
+          <Typography align='center' variant='h4' paragraph>
+            No Transactions
+          </Typography>
+          <Typography>
+            There are no transactions in this Ninja to display yet.
+          </Typography>
+        </center>
       )}
     </div>
   )

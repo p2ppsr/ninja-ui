@@ -6,21 +6,13 @@ import {
   TextField,
   Divider
 } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles';
 import bsv from 'babbage-bsv'
 import { getPaymentAddress } from 'sendover'
 import { isAuthenticated, createAction } from '@babbage/sdk'
 import { toast } from 'react-toastify'
 import Ninja from 'utxoninja'
 
-const useStyles = makeStyles(
-  theme => ({
-  }),
-  { name: 'Sweep' }
-)
-
 const Send = () => {
-  const classes = useStyles()
   const [amount, setAmount] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -59,7 +51,7 @@ const Send = () => {
         satoshis: parseInt(amount)
       }))
       console.log('got tx', tx)
-      let sighashType = bsv.crypto.Signature.SIGHASH_FORKID |
+      const sighashType = bsv.crypto.Signature.SIGHASH_FORKID |
         bsv.crypto.Signature.SIGHASH_NONE |
         bsv.crypto.Signature.SIGHASH_ANYONECANPAY
       const signature = bsv.Transaction.Sighash.sign(
@@ -154,7 +146,7 @@ const Send = () => {
       const directTransaction = {
         derivationPrefix,
         transaction,
-        senderIdentityKey: bsv.PrivateKey.fromString(localStorage.privateKey)
+        senderIdentityKey: bsv.PrivateKey.fromString(window.localStorage.privateKey)
           .publicKey.toString(),
         protocol: '3241645161d8',
         note: 'Incoming payment from Ninja UI'
@@ -182,108 +174,112 @@ const Send = () => {
       <br />
       <br />
       <Typography variant='h5' paragraph>MetaNet Client</Typography>
-      {!success ? (
-        <>
-          <Typography paragraph>
-            Ensure a MetaNet Client is open, or it will not work.
-          </Typography>
-          <TextField
-            label='Amount (satoshis)'
-            type='number'
-            value={amount}
-            fullWidth
-            onChange={e => setAmount(e.target.value)}
-          />
-          <br />
-          <br />
-          <Button
-            disabled={loading}
-            onClick={handleSend}
-            variant='contained'
-            color='primary'
-          >
-            Send to Client
-          </Button>
-          <br />
-          <br />
-          {loading && <LinearProgress />}
-        </>) : (
-        <>
-          <Typography paragraph>
-            You sent <b>{amount} satoshis</b> to Babbage Desktop! Restart to see your balance.
-          </Typography>
-          <Button
-            onClick={() => {
-              setSuccess(false)
-              setAmount('')
-            }}
-            variant='contained'
-          >
-            Done
-          </Button>
-        </>
-      )}
+      {!success
+        ? (
+          <>
+            <Typography paragraph>
+              Ensure a MetaNet Client is open, or it will not work.
+            </Typography>
+            <TextField
+              label='Amount (satoshis)'
+              type='number'
+              value={amount}
+              fullWidth
+              onChange={e => setAmount(e.target.value)}
+            />
+            <br />
+            <br />
+            <Button
+              disabled={loading}
+              onClick={handleSend}
+              variant='contained'
+              color='primary'
+            >
+              Send to Client
+            </Button>
+            <br />
+            <br />
+            {loading && <LinearProgress />}
+          </>)
+        : (
+          <>
+            <Typography paragraph>
+              You sent <b>{amount} satoshis</b> to Babbage Desktop! Restart to see your balance.
+            </Typography>
+            <Button
+              onClick={() => {
+                setSuccess(false)
+                setAmount('')
+              }}
+              variant='contained'
+            >
+              Done
+            </Button>
+          </>
+          )}
       <Divider />
       <br />
       <br />
       <Typography variant='h5' paragraph>Another Ninja</Typography>
-      {!ninjaSuccess ? (
-        <>
-          <Typography paragraph>
-            Enter the other Ninja's private key and Dojo URL. Then enter the amount to send.
-          </Typography>
-          <TextField
-            label='Amount (satoshis)'
-            type='number'
-            fullWidth
-            value={ninjaAmount}
-            onChange={e => setNinjaAmount(parseInt(e.target.value))}
-          />
-          <br />
-          <br />
-          <TextField
-            label='External Ninja Private Key (hex)'
-            value={ninjaPrivateKey}
-            fullWidth
-            onChange={e => setNinjaPrivateKey(e.target.value)}
-          />
-          <br />
-          <br />
-          <TextField
-            label='External Dojo URL'
-            value={ninjaDojoURL}
-            fullWidth
-            onChange={e => setNinjaDojoURL(e.target.value)}
-          />
-          <br />
-          <br />
-          <Button
-            disabled={ninjaLoading}
-            onClick={handleNinjaSend}
-            variant='contained'
-            color='primary'
-          >
-            Send to Ninja
-          </Button>
-          <br />
-          <br />
-          {ninjaLoading && <LinearProgress />}
-        </>) : (
-        <>
-          <Typography paragraph>
-            You sent <b>{ninjaAmount} satoshis</b> to an external Ninja! The money has been received and processed by the recipient.
-          </Typography>
-          <Button
-            onClick={() => {
-              setNinjaSuccess(false)
-              setNinjaAmont('')
-            }}
-            variant='contained'
-          >
-            Done
-          </Button>
-        </>
-      )}
+      {!ninjaSuccess
+        ? (
+          <>
+            <Typography paragraph>
+              Enter the other Ninja's private key and Dojo URL. Then enter the amount to send.
+            </Typography>
+            <TextField
+              label='Amount (satoshis)'
+              type='number'
+              fullWidth
+              value={ninjaAmount}
+              onChange={e => setNinjaAmount(parseInt(e.target.value))}
+            />
+            <br />
+            <br />
+            <TextField
+              label='External Ninja Private Key (hex)'
+              value={ninjaPrivateKey}
+              fullWidth
+              onChange={e => setNinjaPrivateKey(e.target.value)}
+            />
+            <br />
+            <br />
+            <TextField
+              label='External Dojo URL'
+              value={ninjaDojoURL}
+              fullWidth
+              onChange={e => setNinjaDojoURL(e.target.value)}
+            />
+            <br />
+            <br />
+            <Button
+              disabled={ninjaLoading}
+              onClick={handleNinjaSend}
+              variant='contained'
+              color='primary'
+            >
+              Send to Ninja
+            </Button>
+            <br />
+            <br />
+            {ninjaLoading && <LinearProgress />}
+          </>)
+        : (
+          <>
+            <Typography paragraph>
+              You sent <b>{ninjaAmount} satoshis</b> to an external Ninja! The money has been received and processed by the recipient.
+            </Typography>
+            <Button
+              onClick={() => {
+                setNinjaSuccess(false)
+                setNinjaAmount('')
+              }}
+              variant='contained'
+            >
+              Done
+            </Button>
+          </>
+          )}
     </div>
   )
 }

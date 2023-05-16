@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Checkbox, Button, Typography, TextField, LinearProgress } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from '@mui/styles/makeStyles'
 import boomerang from 'boomerang-http'
 import bsv from 'babbage-bsv'
 import hashwrap from 'hash-wrap'
@@ -10,58 +10,58 @@ import SendIcon from '@mui/icons-material/Send'
 const useStyles = makeStyles(
   theme => ({
     content_wrap: {
-    maxWidth: '1440px',
-    margin: 'auto',
-    marginTop: '3em',
-    boxSizing: 'border-box',
-    padding: '2em',
-    [theme.breakpoints.down('sm')]: {
-      marginTop: '0.5em',
+      maxWidth: '1440px',
+      margin: 'auto',
+      marginTop: '3em',
+      boxSizing: 'border-box',
+      padding: '2em',
+      [theme.breakpoints.down('sm')]: {
+        marginTop: '0.5em',
+        padding: '0.5em'
+      }
+    },
+    title_text: {
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '2em'
+      },
+      [theme.breakpoints.down('xs')]: {
+        fontSize: '1.6em'
+      }
+    },
+    card_link: {
+      textDecoration: 'none !important'
+    },
+    card_container: {
+      margin: '1.5em auto'
+    },
+    card_grid: {
+      display: 'grid',
+      gridTemplateColumns: '4em 1fr',
+      alignItems: 'center',
+      [theme.breakpoints.down('md')]: {
+        gridTemplateColumns: '3em 1fr'
+      },
+      [theme.breakpoints.down('sm')]: {
+        gridTemplateColumns: '2.5em 1fr'
+      }
+    },
+    link_text: {
+      textAlign: 'left'
+    },
+    utxos_grid: {
+      display: 'grid',
+      gridTemplateColumns: 'auto 1fr auto auto',
+      gridGap: theme.spacing(2)
+    },
+    spv_data_display: {
+      overflow: 'scroll',
+      width: '100%',
+      maxHeight: '40vh',
+      userSelect: 'all',
+      boxSizing: 'border-box',
+      border: '1px solid #999',
       padding: '0.5em'
     }
-  },
-  title_text: {
-    [theme.breakpoints.down('sm')]: {
-      fontSize: '2em'
-    },
-    [theme.breakpoints.down('xs')]: {
-      fontSize: '1.6em'
-    }
-  },
-  card_link: {
-    textDecoration: 'none !important'
-  },
-  card_container: {
-    margin: '1.5em auto'
-  },
-  card_grid: {
-    display: 'grid',
-    gridTemplateColumns: '4em 1fr',
-    alignItems: 'center',
-    [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: '3em 1fr'
-    },
-    [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '2.5em 1fr'
-    }
-  },
-  link_text: {
-    textAlign: 'left'
-  },
-  utxos_grid: {
-    display: 'grid',
-    gridTemplateColumns: 'auto 1fr auto auto',
-    gridGap: theme.spacing(2)
-  },
-  spv_data_display: {
-    overflow: 'scroll',
-    width: '100%',
-    maxHeight: '40vh',
-    userSelect: 'all',
-    boxSizing: 'border-box',
-    border: '1px solid #999',
-    padding: '0.5em'
-  }
   }),
   { name: 'Sweep' }
 )
@@ -102,56 +102,56 @@ const Sweep = () => {
 
   const handleSweep = async () => {
     try {
-    const selectedUtxos = utxos.filter(x => x.selected)
-    console.log('selected', selectedUtxos)
-    const inputs = {}
-    for (const i in selectedUtxos) {
-      const utxo = selectedUtxos[i]
-      if (!inputs[utxo.txid]) {
-        inputs[utxo.txid] = await hashwrap(utxo.txid, {
-          network,
-          taalApiKey: network === 'testnet'
-            ? 'testnet_ba132cc4d5b2ebde7ed0ee0f6ee3f678'
-            : 'mainnet_6c8f8c37afd5c45e09f62d083288a181'
-        })
-        inputs[utxo.txid].outputsToRedeem = []
-      }
-      const tx = new bsv.Transaction()
-      tx.from(new bsv.Transaction.UnspentOutput({
-        txid: utxo.txid,
-        outputIndex: utxo.vout,
-        script: bsv.Script.fromAddress(bsv.Address.fromPrivateKey(
-          bsv.PrivateKey.fromWIF(key)
-        )),
-        satoshis: utxo.satoshis
-      }))
-      const sig = bsv.Transaction.Sighash.sign(
-        tx,
-        bsv.PrivateKey.fromWIF(key),
-        bsv.crypto.Signature.SIGHASH_FORKID |
+      const selectedUtxos = utxos.filter(x => x.selected)
+      console.log('selected', selectedUtxos)
+      const inputs = {}
+      for (const i in selectedUtxos) {
+        const utxo = selectedUtxos[i]
+        if (!inputs[utxo.txid]) {
+          inputs[utxo.txid] = await hashwrap(utxo.txid, {
+            network,
+            taalApiKey: network === 'testnet'
+              ? 'testnet_ba132cc4d5b2ebde7ed0ee0f6ee3f678'
+              : 'mainnet_6c8f8c37afd5c45e09f62d083288a181'
+          })
+          inputs[utxo.txid].outputsToRedeem = []
+        }
+        const tx = new bsv.Transaction()
+        tx.from(new bsv.Transaction.UnspentOutput({
+          txid: utxo.txid,
+          outputIndex: utxo.vout,
+          script: bsv.Script.fromAddress(bsv.Address.fromPrivateKey(
+            bsv.PrivateKey.fromWIF(key)
+          )),
+          satoshis: utxo.satoshis
+        }))
+        const sig = bsv.Transaction.Sighash.sign(
+          tx,
+          bsv.PrivateKey.fromWIF(key),
+          bsv.crypto.Signature.SIGHASH_FORKID |
         bsv.crypto.Signature.SIGHASH_NONE |
         bsv.crypto.Signature.SIGHASH_ANYONECANPAY,
-        0, // Always 0
-        bsv.Script.fromAddress(bsv.Address.fromPrivateKey(
-          bsv.PrivateKey.fromWIF(key)
-        )),
-        new bsv.crypto.BN(utxo.satoshis)
-      )
-      const unlockingScript = bsv.Script.buildPublicKeyHashIn(
-        bsv.PrivateKey.fromWIF(key).publicKey,
-        sig,
-        sig.nhashtype
-      ).toHex()
-      inputs[utxo.txid].outputsToRedeem.push({
-        index: utxo.vout,
-        unlockingScript
+          0, // Always 0
+          bsv.Script.fromAddress(bsv.Address.fromPrivateKey(
+            bsv.PrivateKey.fromWIF(key)
+          )),
+          new bsv.crypto.BN(utxo.satoshis)
+        )
+        const unlockingScript = bsv.Script.buildPublicKeyHashIn(
+          bsv.PrivateKey.fromWIF(key).publicKey,
+          sig,
+          sig.nhashtype
+        ).toHex()
+        inputs[utxo.txid].outputsToRedeem.push({
+          index: utxo.vout,
+          unlockingScript
+        })
+      }
+      console.log(inputs)
+      // Create transaction redeeming selected UTXOs
+      const result = await window.Ninja.getTransactionWithOutputs({
+        inputs
       })
-    }
-    console.log(inputs)
-    // Create transaction redeeming selected UTXOs
-    const result = await window.Ninja.getTransactionWithOutputs({
-      inputs
-    })
       console.log(result)
       setSuccess(true)
     } catch (e) {
