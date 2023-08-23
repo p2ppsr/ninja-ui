@@ -10,7 +10,7 @@ import bsv from 'babbage-bsv'
 import { getPaymentAddress } from 'sendover'
 import { isAuthenticated, createAction } from '@babbage/sdk'
 import { toast } from 'react-toastify'
-import Ninja from 'utxoninja'
+import { Ninja } from 'ninja-base'
 
 const Send = () => {
   const [amount, setAmount] = useState('')

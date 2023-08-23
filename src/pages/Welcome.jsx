@@ -3,7 +3,7 @@ import { TextField, Button, Typography, IconButton } from '@mui/material'
 import Casino from '@mui/icons-material/Casino'
 import makeStyles from '@mui/styles/makeStyles'
 import isKeyInvalid from '../utils/isKeyInvalid'
-import Ninja from 'utxoninja'
+import { Ninja } from 'ninja-base'
 import { toast } from 'react-toastify'
 
 const useStyles = makeStyles(
