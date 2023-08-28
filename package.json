@@ -8,7 +8,7 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.8",
-    "@mui/styles": "^5.11.7",
+    "@mui/styles": "^5.14.6",
     "babbage-bsv": "^0.2.0",
     "boomerang-http": "^0.1.0",
     "hash-wrap": "^1.0.10",
