@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Ninja } from 'ninja-base'
+import { Ninja as utxoninja } from 'ninja-base'
 import makeStyles from '@mui/styles/makeStyles'
 import {
   Button,
