@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import UTXONinja from 'utxoninja'
+import { Ninja as UTXONinja } from 'ninja-base'
 import {
   Typography,
   Button,
