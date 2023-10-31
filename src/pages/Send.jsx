@@ -32,7 +32,9 @@ const Send = () => {
       if (!authenticated) {
         throw new Error('No MetaNet user is authenticated!')
       }
-      const intermediateKey = bsv.PrivateKey.fromRandom()
+      // TODO: Implement a flow that saves the intermediate key...
+      //const intermediateKey = bsv.PrivateKey.fromRandom()
+      const intermediateKey = bsv.PrivateKey.fromHex('2a00b485469dd25043f30f2ecc6f2d61c323827eb712cba985d0b522e109cf46')
       const script = new bsv.Script(
         bsv.Script.fromAddress(bsv.Address.fromPrivateKey(intermediateKey))
       )
