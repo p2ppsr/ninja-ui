@@ -42,7 +42,12 @@ const Send = () => {
       const fundingTx = await window.Ninja.getTransactionWithOutputs({
         outputs: [{
           script: script.toHex(),
-          satoshis: parseInt(amount)
+          satoshis: parseInt(amount),
+          customInstructions: JSON.stringify({
+              source: "handleSend",
+              privKey: intermediateKey.toHex(),
+              protocol: "??"
+          })
         }]
       })
       const fundingTxid = new bsv.Transaction(fundingTx.rawTx).id
@@ -121,7 +126,13 @@ const Send = () => {
       // Create a new output to spend
       const outputs = [{
         script,
-        satoshis: ninjaAmount
+        satoshis: ninjaAmount, customInstructions: JSON.stringify({
+            source: "handleNinjaSend",
+            prefix: derivationPrefix,
+            suffix: derivationSuffix,
+            pubKey: recipientPublicKey,
+            protocol: invoice3241645161d8Protocol
+        })
       }]
 
       // Build a transaction for the foreign Nija
