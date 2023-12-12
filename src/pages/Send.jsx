@@ -10,7 +10,7 @@ import bsv from 'babbage-bsv'
 import { getPaymentAddress } from 'sendover'
 import { isAuthenticated, createAction } from '@babbage/sdk'
 import { toast } from 'react-toastify'
-import { Ninja } from 'ninja-base'
+import { Ninja, invoice3241645161d8, invoice3241645161d8Protocol } from 'ninja-base'
 
 const Send = () => {
   const [amount, setAmount] = useState('')
@@ -113,7 +113,7 @@ const Send = () => {
         senderPrivateKey: window.localStorage.privateKey,
         recipientPublicKey: bsv.PrivateKey.fromHex(ninjaPrivateKey)
           .publicKey.toString(),
-        invoiceNumber: `2-3241645161d8-${derivationPrefix} ${derivationSuffix}`,
+        invoiceNumber: invoice3241645161d8(derivationPrefix, derivationSuffix),
         returnType: 'publicKey'
       })
 
