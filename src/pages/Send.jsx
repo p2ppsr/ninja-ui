@@ -109,13 +109,15 @@ const Send = () => {
         .randomBytes(10)
         .toString('base64')
       // Derive the public key used for creating the output script
+      const recipientPublicKey = bsv.PrivateKey.fromHex(ninjaPrivateKey).publicKey.toString()
       const derivedPublicKey = getPaymentAddress({
         senderPrivateKey: window.localStorage.privateKey,
-        recipientPublicKey: bsv.PrivateKey.fromHex(ninjaPrivateKey)
-          .publicKey.toString(),
+        recipientPublicKey,
         invoiceNumber: invoice3241645161d8(derivationPrefix, derivationSuffix),
         returnType: 'publicKey'
       })
+
+      const protocol3241645161d8 = invoice3241645161d8Protocol.substring(2)
 
       // Create an output script that can only be unlocked with the corresponding derived private key
       const script = new bsv.Script(
@@ -131,7 +133,7 @@ const Send = () => {
             prefix: derivationPrefix,
             suffix: derivationSuffix,
             pubKey: recipientPublicKey,
-            protocol: invoice3241645161d8Protocol
+            protocol: protocol3241645161d8
         })
       }]
 
@@ -162,7 +164,7 @@ const Send = () => {
         transaction,
         senderIdentityKey: bsv.PrivateKey.fromString(window.localStorage.privateKey)
           .publicKey.toString(),
-        protocol: '3241645161d8',
+        protocol: protocol3241645161d8,
         note: 'Incoming payment from Ninja UI'
       }
 
