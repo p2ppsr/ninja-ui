@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import bsv from 'babbage-bsv'
 import { getPaymentAddress } from 'sendover'
-import { isAuthenticated, createAction } from '@babbage/sdk'
+import { isAuthenticated, createAction } from '@babbage/sdk-ts'
 import { toast } from 'react-toastify'
 import { Ninja, invoice3241645161d8, invoice3241645161d8Protocol } from 'ninja-base'
 
