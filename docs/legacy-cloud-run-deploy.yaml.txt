@@ -1,3 +1,4 @@
+# Retired October22,2026; non-executable reference only.
 name: Deployment
 on:
   push:
@@ -18,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: '22.23.4'
       - run: npm ci
       - run: CI=true REACT_APP_IS_STAGING=${{ env.CURRENT_BRANCH == 'master' }} npm run build
       - uses: RafikFarhad/push-to-gcr-github-action@v4.1
